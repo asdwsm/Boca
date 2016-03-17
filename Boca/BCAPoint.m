@@ -10,4 +10,23 @@
 
 @implementation BCAPoint
 
++ (instancetype)pointWithXCoordinate:(float)x yCoordinate:(float)y {
+	BCAPoint *point = [[BCAPoint alloc] init];
+	point.x = x;
+	point.y = y;
+	return point;
+}
+
+- (instancetype)initWithXCoordinate:(float)x yCoordinate:(float)y {
+	if ((self = [super init])) {
+		self.x = x;
+		self.y = y;
+	}
+	return self;
+}
+
+- (NSString *)description {
+	return [NSString stringWithFormat:@"(%f, %f)", self.x, self.y];
+}
+
 @end

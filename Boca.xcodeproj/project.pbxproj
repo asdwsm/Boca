@@ -17,6 +17,8 @@
 		5018FD1A1C97FCBA000C513C /* BCADrawingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5018FD191C97FCBA000C513C /* BCADrawingView.m */; };
 		50B6F32B1C9914A4007A33CF /* BCAPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 50B6F32A1C9914A4007A33CF /* BCAPoint.m */; };
 		50B6F32E1C9914AB007A33CF /* BCATriangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 50B6F32D1C9914AB007A33CF /* BCATriangle.m */; };
+		E2D1F8C71C9A4ADC0053C9F3 /* engine.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D1F8C51C9A4ADC0053C9F3 /* engine.m */; };
+		E2D1F8CA1C9A4B690053C9F3 /* BCARenderingContext.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D1F8C91C9A4B690053C9F3 /* BCARenderingContext.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,10 @@
 		50B6F32A1C9914A4007A33CF /* BCAPoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCAPoint.m; sourceTree = "<group>"; };
 		50B6F32C1C9914AB007A33CF /* BCATriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCATriangle.h; sourceTree = "<group>"; };
 		50B6F32D1C9914AB007A33CF /* BCATriangle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCATriangle.m; sourceTree = "<group>"; };
+		E2D1F8C51C9A4ADC0053C9F3 /* engine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = engine.m; sourceTree = "<group>"; };
+		E2D1F8C61C9A4ADC0053C9F3 /* engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = engine.h; sourceTree = "<group>"; };
+		E2D1F8C81C9A4B690053C9F3 /* BCARenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCARenderingContext.h; sourceTree = "<group>"; };
+		E2D1F8C91C9A4B690053C9F3 /* BCARenderingContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCARenderingContext.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +152,10 @@
 				50B6F32A1C9914A4007A33CF /* BCAPoint.m */,
 				50B6F32C1C9914AB007A33CF /* BCATriangle.h */,
 				50B6F32D1C9914AB007A33CF /* BCATriangle.m */,
+				E2D1F8C81C9A4B690053C9F3 /* BCARenderingContext.h */,
+				E2D1F8C91C9A4B690053C9F3 /* BCARenderingContext.m */,
+				E2D1F8C61C9A4ADC0053C9F3 /* engine.h */,
+				E2D1F8C51C9A4ADC0053C9F3 /* engine.m */,
 			);
 			name = Engine;
 			sourceTree = "<group>";
@@ -251,7 +261,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				50B6F32E1C9914AB007A33CF /* BCATriangle.m in Sources */,
+				E2D1F8CA1C9A4B690053C9F3 /* BCARenderingContext.m in Sources */,
 				5018FD1A1C97FCBA000C513C /* BCADrawingView.m in Sources */,
+				E2D1F8C71C9A4ADC0053C9F3 /* engine.m in Sources */,
 				50B6F32B1C9914A4007A33CF /* BCAPoint.m in Sources */,
 				5018FCF91C97F995000C513C /* ViewController.m in Sources */,
 				5018FCF61C97F995000C513C /* AppDelegate.m in Sources */,

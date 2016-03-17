@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "BCADrawingView.h"
+#import "engine.h"
 
 @implementation ViewController {
 	BCADrawingView *drawingView;
@@ -28,29 +29,23 @@
 	
 	// This is just an example. The rendering engine will give us an uint32_t buffer every 1/60th of second
 	// Which will only be new if something has changed. (Marked "Dirty")
-	// I will set this up so it redraws every 1/60th of a second.
-	// There's a logic issue somewhere in here too. But I'll figure it out later. ;P
 	
-	uint32_t *gradientBuffer = malloc(sizeof(uint32_t) * bufferHeight * bufferWidth);
+	BCARenderingContext *context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight);
 	
-	for (int i = 0; i < bufferWidth; i++) {
-		for (int j = 0; j < bufferHeight; j++) {
-			
-			uint8_t red = 255;
-			uint8_t green = 255;
-			uint8_t blue = 255;
-			
-			blue *= 1 - (j / bufferHeight);
-			green -= j / 4.0;
-			red -= j;
-			
-			uint32_t rgba = (red << 24) + (green << 16) + (blue << 8) + (0xFF);
-			
-			gradientBuffer[(int)(i * (int)bufferHeight) + j] = rgba;
-		}
-	}
+	BCATriangle *triangle = [[BCATriangle alloc] init];
+	triangle.vertices = @[
+						  [BCAPoint pointWithXCoordinate:150 yCoordinate:150],
+						  [BCAPoint pointWithXCoordinate:300 yCoordinate:300],
+						  [BCAPoint pointWithXCoordinate:225 yCoordinate:265]
+						  ];
 	
-	[drawingView setPixelBuffer:gradientBuffer];
+	BCAAddTriangleToContextWithVertices(context, triangle);
+	
+	uint32_t *buffer = BCAPixelBufferForRenderingContext(context);
+	// this probably won't work first try ;P
+	// Cool , it did. lol
+	
+	[drawingView setPixelBuffer:buffer];
 	
 	// Do any additional setup after loading the view, typically from a nib.
 }

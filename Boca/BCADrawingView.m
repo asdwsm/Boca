@@ -15,8 +15,8 @@
 	
 	for (int i = 0; i < self.pixelBufferWidth; i++) {
 		for (int j = 0; j < self.pixelBufferHeight; j++) {
-			uint32_t pixel = self.pixelBuffer[i * self.pixelBufferHeight + j];
-		
+			uint32_t pixel = self.pixelBuffer[j * self.pixelBufferWidth + i];
+			
 			uint32_t rgba = pixel;
 			//		NSLog(@"c 0x%x", rgba);
 			uint8_t red = rgba >> 24;

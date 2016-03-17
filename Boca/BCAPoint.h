@@ -11,4 +11,12 @@
 @interface BCAPoint : NSObject
 @property (nonatomic, assign) float x;
 @property (nonatomic, assign) float y;
++ (instancetype)pointWithXCoordinate:(float)x yCoordinate:(float)y;
+- (instancetype)initWithXCoordinate:(float)x yCoordinate:(float)y;
+/* + Specifies class method. - speicfies instance method. */
+/* Example: [BCAPoint pointWithXCoordinate:...]
+	or BCAPoint *point = [[BCAPoint alloc] initWithXCoordinate:...]
+		[point flip]; √
+		[point pointWithXCoordinate:..] x 
+ */
 @end
