@@ -23,13 +23,13 @@ void BCAAddTriangleToContextWithVertices(BCARenderingContext *context, BCATriang
 }
 
 void BCASetPixelColorForBufferAtPoint(uint32_t *buffer, float bufferWidth, float bufferHeight, uint32_t color, BCAPoint *point) {
-	if (point.x > bufferWidth || point.x < 0 || point.y > bufferHeight || point.y < 0) {
-		
-		NSLog(@"BAD COORDINATES. %@", point);
-		
-		return;
-	}
-	
+//	if (point.x > bufferWidth || point.x < 0 || point.y > bufferHeight || point.y < 0) {
+//		
+//		NSLog(@"BAD COORDINATES. %@", point);
+//		
+//		return;
+//	}
+//	
 	buffer[(int)point.y * (int)bufferWidth + (int)point.x] = color;
 }
 
