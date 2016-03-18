@@ -36,9 +36,9 @@ void BCASetPixelColorForContextAtPoint(BCARenderingContext *context, uint32_t co
 }
 
 void BCADrawLineWithContext (BCARenderingContext *context,BCAPoint *p1, BCAPoint *p2, uint32_t *buffer, uint32_t color){
-
-	NSLog(@"P1 %@", p1);
-	NSLog(@"P2 %@", p2);
+	
+	//NSLog(@"P1 %@", p1);
+	//NSLog(@"P2 %@", p2);
 	
 	if(p1.x > p2.x){
 		BCAPoint *tmp = p1;
@@ -46,19 +46,19 @@ void BCADrawLineWithContext (BCARenderingContext *context,BCAPoint *p1, BCAPoint
 		p2 = tmp;
 	}
 	float slope = (-p2.y + p1.y) / (p2.x -p1.x);
-	NSLog(@"Slope %f", slope);
+	//NSLog(@"Slope %f", slope);
 	if (p1.x == p2.x) {
 		if(p1.y < p2.y){
 			for (int i = p1.y; i < p2.y; i++) {
 				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:p1.x yCoordinate:i];
-				NSLog(@"Inserting. %@", newPoint);
+				//NSLog(@"Inserting. %@", newPoint);
 				BCASetPixelColorForContextAtPoint(context, color, newPoint);
 			}
 		}
 		else {
 			for (int i = p2.y; i < p1.y; i++) {
 				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:p2.x yCoordinate:i];
-				NSLog(@"Inserting. %@", newPoint);
+				//NSLog(@"Inserting. %@", newPoint);
 				BCASetPixelColorForContextAtPoint(context, color, newPoint);
 			}
 		}
@@ -66,19 +66,158 @@ void BCADrawLineWithContext (BCARenderingContext *context,BCAPoint *p1, BCAPoint
 	else if (p2.y - p1.y > 0) {
 		for (double i = p2.x; i > p1.x; i = i - 0.5) {
 			BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabs(slope * (i - p1.x) - p1.y)];
-			NSLog(@"Inserting. %@", newPoint);
+			//NSLog(@"Inserting. %@", newPoint);
 			BCASetPixelColorForContextAtPoint(context, color, newPoint);
 		}
 	}
 	else {
 		for (double i = p1.x; i < p2.x; i = i + 0.5) {
 			BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabs(slope * (i - p2.x) - p2.y)];
-			NSLog(@"Inserting. %@", newPoint);
+			//NSLog(@"Inserting. %@", newPoint);
 			BCASetPixelColorForContextAtPoint(context, color, newPoint);
 		}
 	}
 }
 
+void BCAFillTriangleWithContext(BCAPoint *p1, BCAPoint *p2, BCAPoint *p3, uint32_t color, BCARenderingContext *context){
+	BCAPoint *tip;
+	BCAPoint *bottom1;
+	BCAPoint *bottom2;
+	
+	BCAPoint *high;
+	BCAPoint *low;
+	
+	if ((p1.x > p2.x && p1.x < p3.x) || (p1.x > p3.x && p1.x < p2.x)) {
+		tip = p1;
+		
+		if (p2.x < p3.x) {
+			bottom1 = p2;
+			bottom2 = p3;
+		}
+		else {
+			bottom1 = p3;
+			bottom2 = p2;
+		}
+		
+		if (p1.y < (bottom1.y + bottom2.y) / 2)
+			high = p1;
+		else
+			low = p1;
+	}
+	
+	if ((p2.x > p1.x && p2.x < p3.x) || (p2.x > p3.x && p2.x < p1.x)) {
+		tip = p2;
+
+		if (p1.x < p3.x) {
+			bottom1 = p1;
+			bottom2 = p3;
+		}
+		else {
+			bottom1 = p3;
+			bottom2 = p1;
+		}
+		if (p2.y < (bottom1.y + bottom2.y) / 2)
+			high = p2;
+		else
+			low = p2;
+	}
+	
+	
+	if ((p3.x > p2.x && p3.x < p1.x) || (p3.x > p1.x && p3.x < p2.x)) {
+		tip = p3;
+	
+		if (p1.x < p2.x) {
+			bottom1 = p1;
+			bottom2 = p2;
+		}
+		else {
+			bottom1 = p2;
+			bottom2 = p1;
+		}
+		
+		if (p3.y < (bottom1.y + bottom2.y) / 2)
+			high = p3;
+		else
+			low = p3;
+	}
+
+
+	
+	
+	//try to fill in now
+	NSLog(@"P1 %@", p1);
+	NSLog(@"P2 %@", p2);
+	NSLog(@"P3 %@", p3);
+	NSLog(@"HIGH %@", high);
+	NSLog(@"LOW %@", low);
+	NSLog(@"tip %@", tip);
+	NSLog(@"BOTTOM1 %@", bottom1);
+	NSLog(@"BOTTOM2 %@", bottom2);
+	//when tip on top
+	if (tip == high) {
+		float m1 = (-bottom1.y + high.y) / (bottom1.x - high.x);
+		float m2 = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
+		float m3 = (-bottom2.y + high.y) / (bottom2.x - high.x);
+		
+		NSLog(@"m1 %f", m1);
+		NSLog(@"m2 %f", m2);
+		
+		for (int i = bottom1.x; i < bottom2.x; i++) {
+			
+			float j = fabsf((m2 * (i - bottom1.x) - bottom1.y));
+			if (i < high.x) {
+				while (j > fabsf(m1 * (i - bottom1.x) - bottom1.y)) {
+					BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:j];
+					//NSLog(@"Inserting. %@", newPoint);
+					BCASetPixelColorForContextAtPoint(context, color, newPoint);
+					j--;
+				}
+			}
+			else {
+				while (j > fabsf(m3 * (i - bottom2.x) - bottom2.y)) {
+					BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:j];
+					//NSLog(@"Inserting. %@", newPoint);
+					BCASetPixelColorForContextAtPoint(context, color, newPoint);
+					j--;
+				}
+			}
+		}
+		
+	}
+	
+	
+	//when tip on bot
+	if (tip == low) {
+		float m1 = (-bottom1.y + low.y) / (bottom1.x - low.x);
+		float m2 = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
+		float m3 = (-bottom2.y + low.y) / (bottom2.x - low.x);
+		
+		NSLog(@"m1 %f", m1);
+		NSLog(@"m2 %f", m2);
+		
+		for (int i = bottom1.x; i < bottom2.x; i++) {
+			
+			float j = fabsf((m2 * (i - bottom1.x) - bottom1.y));
+			if (i < low.x) {
+				while (j < fabsf(m1 * (i - bottom1.x) - bottom1.y)) {
+					BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:j];
+					//NSLog(@"Inserting. %@", newPoint);
+					BCASetPixelColorForContextAtPoint(context, color, newPoint);
+					j++;
+				}
+			}
+			else {
+				while (j < fabsf(m3 * (i - bottom2.x) - bottom2.y)) {
+					BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:j];
+					//NSLog(@"Inserting. %@", newPoint);
+					BCASetPixelColorForContextAtPoint(context, color, newPoint);
+					j++;
+				}
+			}
+		}
+		
+	}
+}
 
 
 
@@ -106,26 +245,28 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 		// Put blueColor in every spot where a triangle vertex is.
 		// Use either loop style.
 		NSArray *vertices = triangle.vertices;
-	
+		
 		BCAPoint *p1 = vertices[0], *p2 = vertices[1], *p3 = vertices[2];
 		
 		BCADrawLineWithContext (context, p1, p2, buffer, blueColor);
 		BCADrawLineWithContext (context, p1, p3, buffer, blueColor);
 		BCADrawLineWithContext (context, p2, p3, buffer, blueColor);
 		
-	//
-
-//		BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, [BCAPoint pointWithXCoordinate:299 yCoordinate:299]);
-//		BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, [BCAPoint pointWithXCoordinate:1 yCoordinate:1]);
-//		
-//		for (int i = p1.x ; i < p2.x; i++) {
-//			for (int j = p1.y; j > p2.y; j++) {
-//				// create NEW point. :)doesn't work though
-//				// Let's try this.
-//				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:j];
-//				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
-//			}
-//		}
+		BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
+		
+		//
+		
+		//		BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, [BCAPoint pointWithXCoordinate:299 yCoordinate:299]);
+		//		BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, [BCAPoint pointWithXCoordinate:1 yCoordinate:1]);
+		//
+		//		for (int i = p1.x ; i < p2.x; i++) {
+		//			for (int j = p1.y; j > p2.y; j++) {
+		//				// create NEW point. :)doesn't work though
+		//				// Let's try this.
+		//				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:j];
+		//				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
+		//			}
+		//		}
 		
 		// Suppose you have a function f(0) = p1, f(n) = p2. then you iterate over (0,n)
 		
@@ -133,7 +274,7 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 			// nooppe
 			// use point.x and point.y and insert into `buffer`
 			// ok so this isn't entirely obvious because of the way it's done.
-//			buffer[(int)point.y * (int)context.width + (int)point.x] = blueColor;
+			//			buffer[(int)point.y * (int)context.width + (int)point.x] = blueColor;
 			// This probably makes no sense. Right? It's ok. it'll make sense soon. ;-)
 			// try to fill in buffer with blueColor inside of the triangle. Start with the lines connecting the vertices :)
 			// actually, let's make this easier for you.
@@ -147,7 +288,7 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 			
 		}
 	}
-
+	
 	// Let's test our code.
 	
 	return buffer;
