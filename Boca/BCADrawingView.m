@@ -27,7 +27,7 @@
 			
 			UIColor *pixelColor = [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:1.0];
 			[pixelColor set];
-			UIRectFill(CGRectMake(i	* 2, j * 2, 2, 2));
+			UIRectFill(CGRectMake(i, j, 1, 1));
 		}
 	}
 }

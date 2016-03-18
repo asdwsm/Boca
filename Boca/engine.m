@@ -23,13 +23,13 @@ void BCAAddTriangleToContextWithVertices(BCARenderingContext *context, BCATriang
 }
 
 void BCASetPixelColorForBufferAtPoint(uint32_t *buffer, float bufferWidth, float bufferHeight, uint32_t color, BCAPoint *point) {
-//	if (point.x > bufferWidth || point.x < 0 || point.y > bufferHeight || point.y < 0) {
-//		
-//		NSLog(@"BAD COORDINATES. %@", point);
-//		
-//		return;
-//	}
-//	
+	if (point.x > bufferWidth || point.x < 0 || point.y > bufferHeight || point.y < 0) {
+		
+		NSLog(@"BAD COORDINATES. %@", point);
+		
+		return;
+	}
+	
 	buffer[(int)point.y * (int)bufferWidth + (int)point.x] = color;
 }
 
@@ -72,21 +72,21 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 		NSLog(@"P2 %@", p2);
 		NSLog(@"Slope %f", slope);
 //		
-//		if (p2.y - p1.y > 0) {
-//			for (int i = p2.x; i > p1.x; i--) {
-//				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:slope * (i - p1.x) - p1.y];
-////				NSLog(@"Inserting. %@", newPoint);
-//				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
-//			}
-//		}
-//		else {
-//			for (int i = p2.x; i < p1.x; i++) {
-//				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:slope * (i - p1.x) + p1.y];
-////				NSLog(@"Inserting. %@", newPoint);
-//				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
-//			}
-//		}
-////
+		if (p2.y - p1.y > 0) {
+			for (int i = p2.x; i > p1.x; i--) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:slope * (i - p1.x) - p1.y];
+//				NSLog(@"Inserting. %@", newPoint);
+				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
+			}
+		}
+		else {
+			for (int i = p2.x; i < p1.x; i++) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:slope * (i - p1.x) + p1.y];
+//				NSLog(@"Inserting. %@", newPoint);
+				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
+			}
+		}
+//
 
 //		BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, [BCAPoint pointWithXCoordinate:299 yCoordinate:299]);
 //		BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, [BCAPoint pointWithXCoordinate:1 yCoordinate:1]);

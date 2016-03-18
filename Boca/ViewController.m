@@ -20,8 +20,10 @@
 	[self.view addSubview:drawingView];
 	[drawingView setFrame:CGRectMake(0, 20, self.view.frame.size.width, self.view.frame.size.height - 20)];
 	
-	CGFloat bufferWidth = (drawingView.frame.size.width / 2);
-	CGFloat bufferHeight = (drawingView.frame.size.height / 2);
+	CGFloat bufferWidth = (drawingView.frame.size.width);
+	CGFloat bufferHeight = (drawingView.frame.size.height);
+	
+	NSLog(@"(w:%f, h:%f)", bufferWidth, bufferHeight);
 	
 	[drawingView setPixelBufferWidth:bufferWidth];
 	[drawingView setPixelBufferHeight:bufferHeight];
@@ -34,9 +36,9 @@
 	
 	BCATriangle *triangle = [[BCATriangle alloc] init];
 	triangle.vertices = @[
-						  [BCAPoint pointWithXCoordinate:150 yCoordinate:150],
-						  [BCAPoint pointWithXCoordinate:300 yCoordinate:300],
-						  [BCAPoint pointWithXCoordinate:225 yCoordinate:265]
+						  [BCAPoint pointWithXCoordinate:1 yCoordinate:1],
+						  [BCAPoint pointWithXCoordinate:1 yCoordinate:15],
+						  [BCAPoint pointWithXCoordinate:182 yCoordinate:182]
 						  ];
 	
 	BCAAddTriangleToContextWithVertices(context, triangle);
