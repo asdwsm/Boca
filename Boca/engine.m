@@ -68,24 +68,83 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 		// Now, we need to decide which direction to go in, because p1 could be above, or below p2.
 		// Got the idea? yes
 		// want me to continue? let me try
+		//first line
 		NSLog(@"P1 %@", p1);
 		NSLog(@"P2 %@", p2);
 		NSLog(@"Slope %f", slope);
-//		
-		if (p2.y - p1.y > 0) {
+		if (p1.x == p2.x) {
+			for (int i = p1.y; i < p2.y; i++) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:p1.x yCoordinate:i];
+				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
+			}
+		}
+		else if (p2.y - p1.y > 0) {
 			for (int i = p2.x; i > p1.x; i--) {
-				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:slope * (i - p1.x) - p1.y];
-//				NSLog(@"Inserting. %@", newPoint);
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabsf(slope * (i - p1.x) - p1.y)];
+				NSLog(@"Inserting. %@", newPoint);
 				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
 			}
 		}
 		else {
-			for (int i = p2.x; i < p1.x; i++) {
-				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:slope * (i - p1.x) + p1.y];
-//				NSLog(@"Inserting. %@", newPoint);
+			for (int i = p1.x; i > p2.x; i--) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabsf(slope * (i - p2.x) + p2.y)];
+				NSLog(@"Inserting. %@", newPoint);
 				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
 			}
 		}
+		
+		//second line
+		slope = (-p3.y + p1.y) / (p3.x -p1.x);
+		NSLog(@"P1 %@", p1);
+		NSLog(@"P3 %@", p3);
+		NSLog(@"Slope %f", slope);
+		if (p1.x == p3.x) {
+			for (int i = p1.y; i < p3.y; i++) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:p1.x yCoordinate:i];
+				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
+			}
+		}
+		else if (p3.y - p1.y > 0) {
+			for (int i = p3.x; i > p1.x; i--) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabsf(slope * (i - p1.x) - p1.y)];
+				NSLog(@"Inserting. %@", newPoint);
+				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
+			}
+		}
+		else {
+			for (int i = p1.x; i > p3.x; i--) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabsf(slope * (i - p3.x) + p3.y)];
+				NSLog(@"Inserting. %@", newPoint);
+				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
+			}
+		}
+		
+		//third line
+		slope = (-p3.y + p2.y) / (p3.x -p2.x);
+		NSLog(@"P2 %@", p2);
+		NSLog(@"P3 %@", p3);
+		NSLog(@"Slope %f", slope);
+		if (p2.x == p3.x) {
+			for (int i = p2.y; i < p3.y; i++) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:p2.x yCoordinate:i];
+				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
+			}
+		}
+		else if (p3.y - p2.y > 0) {
+			for (int i = p3.x; i > p2.x; i--) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabsf(slope * (i - p2.x) - p2.y)];
+				NSLog(@"Inserting. %@", newPoint);
+				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
+			}
+		}
+		else {
+			for (int i = p2.x; i < p3.x; i++) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabsf(slope * (i - p3.x) + p3.y)];
+				NSLog(@"Inserting. %@", newPoint);
+				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
+			}
+		}
+
 //
 
 //		BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, [BCAPoint pointWithXCoordinate:299 yCoordinate:299]);
