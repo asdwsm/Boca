@@ -128,15 +128,15 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 			}
 		}
 		else if (p2.y - p1.y > 0) {
-			for (int i = p2.x; i > p1.x; i--) {
-				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabsf(slope * (i - p1.x) - p1.y)];
+			for (double i = p2.x; i > p1.x; i = i - 0.5) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabs(slope * (i - p1.x) - p1.y)];
 				NSLog(@"Inserting. %@", newPoint);
 				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
 			}
 		}
 		else {
-			for (int i = p1.x; i < p2.x; i++) {
-				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabsf(slope * (i - p2.x) - p2.y)];
+			for (double i = p1.x; i < p2.x; i = i + 0.5) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabs(slope * (i - p2.x) - p2.y)];
 				NSLog(@"Inserting. %@", newPoint);
 				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
 			}
@@ -164,15 +164,15 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 			}
 		}
 		else if (p3.y - p1.y > 0) {
-			for (int i = p3.x; i > p1.x; i--) {
-				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabsf(slope * (i - p1.x) - p1.y)];
+			for (double i = p3.x; i > p1.x; i = i - 0.5) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabs(slope * (i - p1.x) - p1.y)];
 				NSLog(@"Inserting. %@", newPoint);
 				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
 			}
 		}
 		else {
-			for (int i = p1.x; i < p3.x; i++) {
-				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabsf(slope * (i - p3.x) - p3.y)];
+			for (double i = p1.x; i < p3.x; i = i + 0.5) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabs(slope * (i - p3.x) - p3.y)];
 				NSLog(@"Inserting. %@", newPoint);
 				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
 			}
@@ -200,15 +200,15 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 			}
 		}
 		else if (p3.y - p2.y > 0) {
-			for (int i = p3.x; i > p2.x; i--) {
-				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabsf(slope * (i - p2.x) - p2.y)];
+			for (double i = p3.x; i > p2.x; i = i - 0.5) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabs(slope * (i - p2.x) - p2.y)];
 				NSLog(@"Inserting. %@", newPoint);
 				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
 			}
 		}
 		else {
-			for (int i = p2.x; i < p3.x; i++) {
-				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabsf(slope * (i - p3.x) - p3.y)];
+			for (double i = p2.x; i < p3.x; i = i + 0.5) {
+				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:fabs(slope * (i - p3.x) - p3.y)];
 				NSLog(@"Inserting. %@", newPoint);
 				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
 			}
