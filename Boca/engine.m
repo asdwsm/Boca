@@ -33,47 +33,16 @@ void BCASetPixelColorForBufferAtPoint(uint32_t *buffer, float bufferWidth, float
 	buffer[(int)point.y * (int)bufferWidth + (int)point.x] = color;
 }
 
-
-void pickPoints (BCAPoint *p1, BCAPoint *p2, BCAPoint *p3) {
-
-	if (p1.x > p2.x) {
-		int tmpX;
-		int tmpY;
-		tmpX = p1.x;
-		tmpY = p1.y;
-		p1.x = p2.x;
-		p1.y = p2.y;
-		p2.x = tmpX;
-		p2.y = tmpX;
-	}
-	
-	if (p1.x > p3.x) {
-		int tmpX;
-		int tmpY;
-		tmpX = p1.x;
-		tmpY = p1.y;
-		p1.x = p3.x;
-		p1.y = p3.y;
-		p3.x = tmpX;
-		p3.y = tmpX;
-	}
-	
-	if (p2.x > p3.x) {
-		int tmpX;
-		int tmpY;
-		tmpX = p2.x;
-		tmpY = p2.y;
-		p2.x = p3.x;
-		p2.y = p3.y;
-		p3.x = tmpX;
-		p3.y = tmpX;
-	}
-}
-
-void lineDraing (BCARenderingContext *context,BCAPoint *p1, BCAPoint *p2, uint32_t *buffer, uint32_t color){
+void BCADrawLineWithContext (BCARenderingContext *context,BCAPoint *p1, BCAPoint *p2, uint32_t *buffer, uint32_t color){
 
 	NSLog(@"P1 %@", p1);
 	NSLog(@"P2 %@", p2);
+	
+	if(p1.x > p2.x){
+		BCAPoint *tmp = p1;
+		p1 = p2;
+		p2 = tmp;
+	}
 	float slope = (-p2.y + p1.y) / (p2.x -p1.x);
 	NSLog(@"Slope %f", slope);
 	if (p1.x == p2.x) {
@@ -138,11 +107,9 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 	
 		BCAPoint *p1 = vertices[0], *p2 = vertices[1], *p3 = vertices[2];
 		
-		pickPoints(p1, p2, p3);
-		
-		lineDraing (context, p1, p2, buffer, blueColor);
-		lineDraing (context, p1, p3, buffer, blueColor);
-		lineDraing (context, p2, p3, buffer, blueColor);
+		BCADrawLineWithContext (context, p1, p2, buffer, blueColor);
+		BCADrawLineWithContext (context, p1, p3, buffer, blueColor);
+		BCADrawLineWithContext (context, p2, p3, buffer, blueColor);
 		
 	//
 
