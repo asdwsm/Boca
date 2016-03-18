@@ -12,6 +12,7 @@
 
 @implementation ViewController {
 	BCADrawingView *drawingView;
+	BCARenderingContext *context;
 }
 
 - (void)viewDidLoad {
@@ -32,16 +33,11 @@
 	// This is just an example. The rendering engine will give us an uint32_t buffer every 1/60th of second
 	// Which will only be new if something has changed. (Marked "Dirty")
 	
-	BCARenderingContext *context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight);
+	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight);
 	
-	BCATriangle *triangle = [[BCATriangle alloc] init];
-	triangle.vertices = @[
-						  [BCAPoint pointWithXCoordinate:1 yCoordinate:1],
-						  [BCAPoint pointWithXCoordinate:1 yCoordinate:15],
-						  [BCAPoint pointWithXCoordinate:182 yCoordinate:182]
-						  ];
+	[self pushRandomTriangle];
 	
-	BCAAddTriangleToContextWithVertices(context, triangle);
+	
 	
 	uint32_t *buffer = BCAPixelBufferForRenderingContext(context);
 	// this probably won't work first try ;P
@@ -50,6 +46,28 @@
 	[drawingView setPixelBuffer:buffer];
 	
 	// Do any additional setup after loading the view, typically from a nib.
+}
+
+- (void)pushRandomTriangle {
+	BCATriangle *triangle = [[BCATriangle alloc] init];
+	
+	NSMutableArray *points = [[NSMutableArray alloc] init];
+	
+	for (int i = 0; i < 3; i++) {
+		int width = (int)context.width;
+		int height = (int)context.height;
+		int ranX = arc4random() % (width - 1);
+		int ranY = arc4random() % (height - 1);
+		
+		BCAPoint *p = [BCAPoint pointWithXCoordinate:ranX yCoordinate:ranY];
+		[points addObject:p];
+		
+	}
+	
+	[triangle setVertices:points];
+	
+	[context addTriangle:triangle];
+	
 }
 
 - (void)didReceiveMemoryWarning {
