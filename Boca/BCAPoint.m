@@ -8,30 +8,32 @@
 
 #import "BCAPoint.h"
 
-BCAPoint *BCAPointMake(float x, float y) {
-	BCAPoint *p = [BCAPoint pointWithXCoordinate:x yCoordinate:y];
+BCAPoint *BCAPointMake(float x, float y, float z) {
+	BCAPoint *p = [BCAPoint pointWithXCoordinate:x yCoordinate:y zCoordinate:z];
 	return p;
 }
 
 @implementation BCAPoint
 
-+ (instancetype)pointWithXCoordinate:(float)x yCoordinate:(float)y {
++ (instancetype)pointWithXCoordinate:(float)x yCoordinate:(float)y zCoordinate:(float)z {
 	BCAPoint *point = [[BCAPoint alloc] init];
 	point.x = x;
 	point.y = y;
+	point.z = z;
 	return point;
 }
 
-- (instancetype)initWithXCoordinate:(float)x yCoordinate:(float)y {
+- (instancetype)initWithXCoordinate:(float)x yCoordinate:(float)y zCoordinate:(float)z {
 	if ((self = [super init])) {
 		self.x = x;
 		self.y = y;
+		self.z = z;
 	}
 	return self;
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat:@"(%f, %f)", self.x, self.y];
+	return [NSString stringWithFormat:@"(%f, %f, %f)", self.x, self.y, self.z];
 }
 
 @end
