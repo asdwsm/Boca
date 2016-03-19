@@ -36,8 +36,15 @@
 	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight);
 	
 	[self pushRandomTriangle];
+	// (22,357) (65, 241), (359, 22)
+	BCATriangle *triangle = [[BCATriangle alloc] init];;
+	triangle.vertices = @[
+						  [BCAPoint pointWithXCoordinate:22 yCoordinate:357],
+						  [BCAPoint pointWithXCoordinate:65 yCoordinate:241],
+						  [BCAPoint pointWithXCoordinate:359 yCoordinate:22]
+						  ];
 	
-	
+	BCAAddTriangleToContextWithVertices(context, triangle);
 	
 	uint32_t *buffer = BCAPixelBufferForRenderingContext(context);
 	// this probably won't work first try ;P

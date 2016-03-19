@@ -7,9 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "BCAPolygon.h"
 
 @class BCAPoint;
-@interface BCATriangle : NSObject
+@interface BCATriangle : BCAPolygon
 // Triangle has 3 points, so let's define an array for the points
 @property (nonatomic, strong) NSArray<BCAPoint *> *vertices;
 // - (instancetype)init is here by default.

@@ -1,24 +1,21 @@
 //
-//  BCATriangle.m
+//  BCARectangle.m
 //  Boca
 //
-//  Created by Max Shavrick on 3/16/16.
+//  Created by Max Shavrick on 3/19/16.
 //  Copyright © 2016 mxms. All rights reserved.
 //
 
-#import "BCATriangle.h"
+#import "BCARectangle.h"
 
-@implementation BCATriangle
+@implementation BCARectangle
 
 - (instancetype)initWithPoints:(NSArray<BCAPoint *> *)points {
 	if ((self = [super init])) {
-		self.vertices = points;
+		// Make triangles here.
+		// self.triangles = ...
 	}
 	return self;
-}
-
-- (NSArray *)triangles {
-	return @[self];
 }
 
 @end

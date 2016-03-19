@@ -140,7 +140,7 @@ void BCAFillTriangleWithContext(BCAPoint *p1, BCAPoint *p2, BCAPoint *p3, uint32
 			bottom2 = p1;
 		}
 		float m = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
-		float distance = m * (p1.x - bottom1.x) - bottom1.y;
+
 		if (p3.y > fabsf(m * (p3.x - bottom1.x) - bottom1.y))
 			low = p3;
 		else
