@@ -98,11 +98,13 @@ void BCAFillTriangleWithContext(BCAPoint *p1, BCAPoint *p2, BCAPoint *p3, uint32
 			bottom1 = p3;
 			bottom2 = p2;
 		}
-		
-		if (p1.y < (bottom1.y + bottom2.y) / 2)
-			high = p1;
-		else
+		float m = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
+		float distance = (m * p1.x + p1.y + (m * bottom1.x - bottom1.y) ) / sqrt(m * m + 1);
+		NSLog(@"distance %f", distance);
+		if (p1.y > fabsf(m * (p1.x - bottom1.x) - bottom1.y))
 			low = p1;
+		else
+			high = p1;
 	}
 	
 	if ((p2.x > p1.x && p2.x < p3.x) || (p2.x > p3.x && p2.x < p1.x)) {
@@ -116,10 +118,13 @@ void BCAFillTriangleWithContext(BCAPoint *p1, BCAPoint *p2, BCAPoint *p3, uint32
 			bottom1 = p3;
 			bottom2 = p1;
 		}
-		if (p2.y < (bottom1.y + bottom2.y) / 2)
-			high = p2;
-		else
+		float m = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
+		float distance = (m * p2.x + p2.y + (m * bottom1.x - bottom1.y) ) / sqrt(m * m + 1);
+		NSLog(@"distance %f", distance);
+		if (p2.y > fabsf(m * (p2.x - bottom1.x) - bottom1.y))
 			low = p2;
+		else
+			high = p2;
 	}
 	
 	
@@ -134,16 +139,14 @@ void BCAFillTriangleWithContext(BCAPoint *p1, BCAPoint *p2, BCAPoint *p3, uint32
 			bottom1 = p2;
 			bottom2 = p1;
 		}
-		
-		if (p3.y < (bottom1.y + bottom2.y) / 2)
-			high = p3;
-		else
+		float m = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
+		float distance = m * (p1.x - bottom1.x) - bottom1.y;
+		if (p3.y > fabsf(m * (p3.x - bottom1.x) - bottom1.y))
 			low = p3;
+		else
+			high = p3;
 	}
 
-
-	
-	
 	//try to fill in now
 	NSLog(@"P1 %@", p1);
 	NSLog(@"P2 %@", p2);
@@ -184,7 +187,6 @@ void BCAFillTriangleWithContext(BCAPoint *p1, BCAPoint *p2, BCAPoint *p3, uint32
 		}
 		
 	}
-	
 	
 	//when tip on bot
 	if (tip == low) {
@@ -283,8 +285,7 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 			BCASetPixelColorForContextAtPoint(context, 0xFFFFFFFF, point);
 			
 			// Ok! Now try to fill in points in the triangle, starrting with the permiters. :)
-			// You can declare the 3 points and do it outside of this loop if that will make it easier for you to do the math.
-			
+			// You can declare the 3 points and do it outside of this loop if that will make it easier for you to do the math
 			
 		}
 	}
