@@ -87,6 +87,87 @@ void BCAFillTriangleWithContext(BCAPoint *p1, BCAPoint *p2, BCAPoint *p3, uint32
 	BCAPoint *high;
 	BCAPoint *low;
 	
+	if (p1.x == p2.x) {
+		if (p1.y < p2.y) {
+			tip = p1;
+			high = p1;
+			if (p2.x < p3.x) {
+				bottom1 = p2;
+				bottom2 = p3;
+			}
+			else {
+				bottom1 = p3;
+				bottom2 = p2;
+			}
+		}
+		else {
+			tip = p2;
+			high = p2;
+			if (p1.x < p3.x) {
+				bottom1 = p1;
+				bottom2 = p3;
+			}
+			else {
+				bottom1 = p3;
+				bottom2 = p1;
+			}
+		}
+	}
+	
+	if (p1.x == p3.x) {
+		if (p1.y < p3.y) {
+			tip = p1;
+			high = p1;
+			if (p3.x < p2.x) {
+				bottom1 = p3;
+				bottom2 = p2;
+			}
+			else {
+				bottom1 = p2;
+				bottom2 = p3;
+			}
+		}
+		else {
+			tip = p3;
+			high = p3;
+			if (p1.x < p2.x) {
+				bottom1 = p1;
+				bottom2 = p2;
+			}
+			else {
+				bottom1 = p2;
+				bottom2 = p1;
+			}
+		}
+	}
+	
+	if (p2.x == p3.x) {
+		if (p2.y < p3.y) {
+			tip = p2;
+			high = p2;
+			if (p3.x < p1.x) {
+				bottom1 = p3;
+				bottom2 = p1;
+			}
+			else {
+				bottom1 = p1;
+				bottom2 = p3;
+			}
+		}
+		else {
+			tip = p3;
+			high = p3;
+			if (p2.x < p1.x) {
+				bottom1 = p2;
+				bottom2 = p1;
+			}
+			else {
+				bottom1 = p1;
+				bottom2 = p2;
+			}
+		}
+	}
+
 	if ((p1.x > p2.x && p1.x < p3.x) || (p1.x > p3.x && p1.x < p2.x)) {
 		tip = p1;
 		
