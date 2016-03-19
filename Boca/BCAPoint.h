@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+@class BCAPoint;
+BCAPoint *BCAPointMake(float x, float y);
+
 @interface BCAPoint : NSObject
 @property (nonatomic, assign) float x;
 @property (nonatomic, assign) float y;

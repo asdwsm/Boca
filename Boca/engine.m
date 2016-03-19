@@ -19,7 +19,7 @@ BCARenderingContext *BCACreateRenderingContextWithDimensions(float width, float 
 }
 
 void BCAAddTriangleToContextWithVertices(BCARenderingContext *context, BCATriangle *triangle) {
-	[context addTriangle:triangle];
+	[context addPolygon:triangle];
 }
 
 void BCASetPixelColorForContextAtPoint(BCARenderingContext *context, uint32_t color, BCAPoint *point) {
@@ -242,8 +242,16 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 	// 00 = blue = 0
 	// FF = alpha = 255 (not transparent, opaque)
 	
+	NSMutableArray *triangles = [[NSMutableArray alloc] init];
 	
-	for (BCATriangle *triangle in [context _polygons]) {
+	for (BCAPolygon *polygon in [context _polygons]) {
+		[triangles addObjectsFromArray:[polygon triangles]];
+	}
+	
+	
+	
+	
+	for (BCATriangle *triangle in triangles) {
 		// Put blueColor in every spot where a triangle vertex is.
 		// Use either loop style.
 		NSArray *vertices = triangle.vertices;
@@ -255,22 +263,7 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 		BCADrawLineWithContext (context, p2, p3, buffer, blueColor);
 		
 		BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
-		
-		//
-		
-		//		BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, [BCAPoint pointWithXCoordinate:299 yCoordinate:299]);
-		//		BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, [BCAPoint pointWithXCoordinate:1 yCoordinate:1]);
-		//
-		//		for (int i = p1.x ; i < p2.x; i++) {
-		//			for (int j = p1.y; j > p2.y; j++) {
-		//				// create NEW point. :)doesn't work though
-		//				// Let's try this.
-		//				BCAPoint *newPoint = [BCAPoint pointWithXCoordinate:i yCoordinate:j];
-		//				BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, blueColor, newPoint);
-		//			}
-		//		}
-		
-		// Suppose you have a function f(0) = p1, f(n) = p2. then you iterate over (0,n)
+
 		
 		for (BCAPoint *point in vertices) {
 			// nooppe

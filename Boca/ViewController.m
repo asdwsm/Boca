@@ -36,15 +36,7 @@
 	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight);
 	
 	[self pushRandomTriangle];
-	// (22,357) (65, 241), (359, 22)
-	BCATriangle *triangle = [[BCATriangle alloc] init];;
-	triangle.vertices = @[
-						  [BCAPoint pointWithXCoordinate:22 yCoordinate:357],
-						  [BCAPoint pointWithXCoordinate:65 yCoordinate:241],
-						  [BCAPoint pointWithXCoordinate:359 yCoordinate:22]
-						  ];
-	
-	BCAAddTriangleToContextWithVertices(context, triangle);
+	[self pushRandomRectangle];
 	
 	uint32_t *buffer = BCAPixelBufferForRenderingContext(context);
 	// this probably won't work first try ;P
@@ -53,6 +45,26 @@
 	[drawingView setPixelBuffer:buffer];
 	
 	// Do any additional setup after loading the view, typically from a nib.
+}
+
+- (void)pushRandomRectangle {
+	int width = (int)context.width;
+	int height = (int)context.height;
+	int ranX = arc4random() % (width - 1);
+	int ranY = arc4random() % (height - 1);
+	
+	BCAPoint *p = BCAPointMake(ranX, ranY);
+	NSLog(@"p %@", p);
+	int ranWidth = arc4random() % (width - ranX - 1);
+	int ranHeight = arc4random() % (height - ranY - 1);
+	
+	BCAPoint *bottomLeft = BCAPointMake(p.x, p.y + ranHeight);
+	BCAPoint *bottomRight = BCAPointMake(p.x + ranWidth, p.y + ranHeight);
+	BCAPoint *topRight = BCAPointMake(p.x + ranWidth, p.y);
+	
+	BCAPolygon *triangle = BCAPolygonWithColorAndPoints(0xFF000000, p, bottomLeft, bottomRight, topRight, nil);
+	
+	[context addPolygon:triangle];
 }
 
 - (void)pushRandomTriangle {
@@ -73,7 +85,7 @@
 	
 	[triangle setVertices:points];
 	
-	[context addTriangle:triangle];
+	[context addPolygon:triangle];
 	
 }
 

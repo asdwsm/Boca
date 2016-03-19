@@ -8,6 +8,11 @@
 
 #import "BCAPoint.h"
 
+BCAPoint *BCAPointMake(float x, float y) {
+	BCAPoint *p = [BCAPoint pointWithXCoordinate:x yCoordinate:y];
+	return p;
+}
+
 @implementation BCAPoint
 
 + (instancetype)pointWithXCoordinate:(float)x yCoordinate:(float)y {

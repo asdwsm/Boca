@@ -26,8 +26,8 @@
 	return self;
 }
 
-- (void)addTriangle:(BCATriangle *)triangle {
-	[polygons addObject:triangle];
+- (void)addPolygon:(BCAPolygon *)poly {
+	[polygons addObject:poly];
 }
 
 - (NSArray *)_polygons {

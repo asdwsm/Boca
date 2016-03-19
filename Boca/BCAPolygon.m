@@ -13,7 +13,7 @@
 
 BCAPolygon *BCAPolygonWithColorAndPoints(uint32_t c, ...) {
 	va_list ap;
-	va_start(c, ap);
+	va_start(ap, c);
 	
 	BCAPolygon *poly = nil;
 	
@@ -24,6 +24,8 @@ BCAPolygon *BCAPolygonWithColorAndPoints(uint32_t c, ...) {
 	while ((pt = va_arg(ap, id))) {
 		[points addObject:pt];
 	}
+	
+	va_end(ap);
 	
 	if ([points count] <= 2) {
 		// Cannot have a polygon with less than 3 points.

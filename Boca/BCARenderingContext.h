@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class BCAPoint, BCATriangle;
+@class BCAPoint, BCATriangle, BCAPolygon;
 @interface BCARenderingContext : NSObject
 @property (nonatomic, strong) BCAPoint *perspectiveLocation;
 @property (nonatomic, readonly) float width;
@@ -17,6 +17,6 @@
 // This will store all of our objects. We don't have any objects right now, so I don't know
 // What data types will go in this class. 
 - (instancetype)initWithWidth:(float)width height:(float)height;
-- (void)addTriangle:(BCATriangle *)triangle;
+- (void)addPolygon:(BCAPolygon *)triangle;
 - (NSArray *)_polygons;
 @end
