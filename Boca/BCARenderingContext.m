@@ -20,7 +20,7 @@
 		_width = width;
 		_height = height;
 		// Where should the default perspective be? (0,0)?
-		self.perspectiveLocation = [BCAPoint pointWithXCoordinate:0 yCoordinate:0];
+		self.perspectiveLocation = [BCAPoint pointWithXCoordinate:0 yCoordinate:0 zCoordinate:0];
 		_pixelBuffer = malloc(sizeof(uint32_t) * (int)width * (int)height);
 	}
 	return self;

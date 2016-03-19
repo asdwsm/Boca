@@ -53,14 +53,14 @@
 	int ranX = arc4random() % (width - 1);
 	int ranY = arc4random() % (height - 1);
 	
-	BCAPoint *p = BCAPointMake(ranX, ranY);
+	BCAPoint *p = BCAPointMake(ranX, ranY, 0);
 	NSLog(@"p %@", p);
 	int ranWidth = arc4random() % (width - ranX - 1);
 	int ranHeight = arc4random() % (height - ranY - 1);
 	
-	BCAPoint *bottomLeft = BCAPointMake(p.x, p.y + ranHeight);
-	BCAPoint *bottomRight = BCAPointMake(p.x + ranWidth, p.y + ranHeight);
-	BCAPoint *topRight = BCAPointMake(p.x + ranWidth, p.y);
+	BCAPoint *bottomLeft = BCAPointMake(p.x, p.y + ranHeight, 0);
+	BCAPoint *bottomRight = BCAPointMake(p.x + ranWidth, p.y + ranHeight, 0);
+	BCAPoint *topRight = BCAPointMake(p.x + ranWidth, p.y, 0);
 	
 	BCAPolygon *triangle = BCAPolygonWithColorAndPoints(0xFF000000, p, bottomLeft, bottomRight, topRight, nil);
 	
@@ -78,7 +78,7 @@
 		int ranX = arc4random() % (width - 1);
 		int ranY = arc4random() % (height - 1);
 		
-		BCAPoint *p = [BCAPoint pointWithXCoordinate:ranX yCoordinate:ranY];
+		BCAPoint *p = [BCAPoint pointWithXCoordinate:ranX yCoordinate:ranY zCoordinate:0];
 		[points addObject:p];
 		
 	}
