@@ -13,6 +13,7 @@
 - (instancetype)initWithPoints:(NSArray<BCAPoint *> *)points {
 	if ((self = [super init])) {
 		self.vertices = points;
+		self.color = 0xFFFFFFFF;
 	}
 	return self;
 }

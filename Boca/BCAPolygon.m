@@ -35,6 +35,7 @@ BCAPolygon *BCAPolygonWithColorAndPoints(uint32_t c, ...) {
 	
 	if ([points count] == 3) {
 		BCATriangle *triangle = [[BCATriangle alloc] initWithPoints:points];
+		triangle.color = c;
 		poly = triangle;
 		// allocate triangle
 	}

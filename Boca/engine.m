@@ -357,7 +357,7 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 		BCADrawLineWithContext (context, p1, p3, context.pixelBuffer, blueColor);
 		BCADrawLineWithContext (context, p2, p3, context.pixelBuffer, blueColor);
 		
-		BCAFillTriangleWithContext(p1, p2, p3, whiteColor, context);
+		BCAFillTriangleWithContext(p1, p2, p3, triangle.color, context);
 
 		
 		for (BCAPoint *point in vertices) {

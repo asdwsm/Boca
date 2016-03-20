@@ -36,7 +36,8 @@
 	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight, 10);
 	
 	[self pushRandomTriangle];
-//	[self pushRandomRectangle];
+	[self pushRandomRectangle];
+	[self pushRandomTriangleWithDifferentZ];
 	
 	uint32_t *buffer = BCAPixelBufferForRenderingContext(context);
 	// this probably won't work first try ;P
@@ -67,8 +68,27 @@
 	[context addPolygon:triangle];
 }
 
+- (void)pushRandomTriangleWithDifferentZ {
+	
+	NSMutableArray *points = [[NSMutableArray alloc] init];
+	
+	for (int i = 0; i < 3; i++) {
+		int width = (int)context.width;
+		int height = (int)context.height;
+		int ranX = arc4random() % (width - 1);
+		int ranY = arc4random() % (height - 1);
+		
+		BCAPoint *p = [BCAPoint pointWithXCoordinate:ranX yCoordinate:ranY zCoordinate:3];
+		[points addObject:p];
+		
+	}
+	
+	BCAPolygon *triangle = BCAPolygonWithColorAndPoints(0x00FF00FF, points[0], points[1], points[2], nil);
+	
+	[context addPolygon:triangle];
+}
+
 - (void)pushRandomTriangle {
-	BCATriangle *triangle = [[BCATriangle alloc] init];
 	
 	NSMutableArray *points = [[NSMutableArray alloc] init];
 	
@@ -83,7 +103,7 @@
 		
 	}
 	
-	[triangle setVertices:points];
+	BCAPolygon *triangle = BCAPolygonWithColorAndPoints(0xFF0000FF, points[0], points[1], points[2], nil);
 	
 	[context addPolygon:triangle];
 	
