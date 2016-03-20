@@ -16,15 +16,15 @@ BCAPoint *BCAPointMake(float x, float y, float z) {
 @implementation BCAPoint
 
 + (instancetype)pointWithXCoordinate:(float)x yCoordinate:(float)y zCoordinate:(float)z {
-	BCAPoint *point = [[BCAPoint alloc] init];
-	point.x = x;
-	point.y = y;
-	point.z = z;
+	BCAPoint *point = [[BCAPoint alloc] initWithXCoordinate:x yCoordinate:y zCoordinate:z];
 	return point;
 }
 
 - (instancetype)initWithXCoordinate:(float)x yCoordinate:(float)y zCoordinate:(float)z {
 	if ((self = [super init])) {
+		if (z != 0){
+			
+		}
 		self.x = x;
 		self.y = y;
 		self.z = z;

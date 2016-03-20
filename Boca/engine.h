@@ -15,7 +15,7 @@
 #import "BCATriangle.h"
 #import "BCAPoint.h"
 
-BCARenderingContext *BCACreateRenderingContextWithDimensions(float width, float height);
+BCARenderingContext *BCACreateRenderingContextWithDimensions(float width, float height, float depth);
 void BCAAddTriangleToContextWithVertices(BCARenderingContext *context, BCATriangle *vertices);
 uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context);
 #endif /* engine_h */

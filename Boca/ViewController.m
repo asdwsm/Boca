@@ -33,10 +33,10 @@
 	// This is just an example. The rendering engine will give us an uint32_t buffer every 1/60th of second
 	// Which will only be new if something has changed. (Marked "Dirty")
 	
-	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight);
+	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight, 10);
 	
 	[self pushRandomTriangle];
-	[self pushRandomRectangle];
+//	[self pushRandomRectangle];
 	
 	uint32_t *buffer = BCAPixelBufferForRenderingContext(context);
 	// this probably won't work first try ;P

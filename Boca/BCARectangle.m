@@ -19,7 +19,7 @@
 		BCATriangle *triangle2 = [[BCATriangle alloc] initWithPoints:@[points[2], points[0], points[3]]];
 		
 		self.triangles = @[triangle1, triangle2];
-		
+
 		// Make triangles here.
 		// self.triangles = ...
 	}

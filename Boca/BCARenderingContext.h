@@ -13,10 +13,11 @@
 @property (nonatomic, strong) BCAPoint *perspectiveLocation;
 @property (nonatomic, readonly) float width;
 @property (nonatomic, readonly) float height;
+@property (nonatomic, readonly) float depth;
 @property (nonatomic, readonly) uint32_t *pixelBuffer;
 // This will store all of our objects. We don't have any objects right now, so I don't know
 // What data types will go in this class. 
-- (instancetype)initWithWidth:(float)width height:(float)height;
+- (instancetype)initWithWidth:(float)width height:(float)height depth:(float)depth;
 - (void)addPolygon:(BCAPolygon *)triangle;
 - (NSArray *)_polygons;
 @end

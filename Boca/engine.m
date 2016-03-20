@@ -8,12 +8,16 @@
 
 #include "engine.h"
 
+static const uint32_t blueColor = 0x0000FFFF;
+static const uint32_t whiteColor = 0xFFFFFFFF;
+static const uint32_t blackColor = 0x000000FF;
+
 // We're going to mix C and Objective-C.
 // We need a context data stru
 // This is where we will do the math for rendering our data structures into our buffer.
 
-BCARenderingContext *BCACreateRenderingContextWithDimensions(float width, float height) {
-	BCARenderingContext *context = [[BCARenderingContext alloc] initWithWidth:width height:height];
+BCARenderingContext *BCACreateRenderingContextWithDimensions(float width, float height, float depth) {
+	BCARenderingContext *context = [[BCARenderingContext alloc] initWithWidth:width height:height depth:depth];
 	
 	return context;
 }
@@ -22,17 +26,27 @@ void BCAAddTriangleToContextWithVertices(BCARenderingContext *context, BCATriang
 	[context addPolygon:triangle];
 }
 
-void BCASetPixelColorForContextAtPoint(BCARenderingContext *context, uint32_t color, BCAPoint *point) {
-	if (point.x > context.width	|| point.x < 0 || point.y > context.height || point.y < 0) {
-		
+
+void BCASetPixelColorForBufferAtPoint(uint32_t *buffer, float width, float height, float depth, uint32_t color, BCAPoint *point) {
+
+	if (point.x > width	|| point.x < 0 || point.y > height || point.y < 0 || point.z > depth || point.z < 0) {
 		NSLog(@"BAD COORDINATES. %@", point);
-		
 		return;
 	}
 	
-	uint32_t *buffer = context.pixelBuffer;
+	if (point.z > 0) {
+		NSLog(@"uwot");
+	}
 	
-	buffer[(int)point.y * (int)context.width + (int)point.x] = color;
+	buffer[(int)(width * height) * (int)point.z + (int)point.y * (int)width + (int)point.x] = color;
+}
+
+void BCASetPixelColorForContextWithBufferAtPoint(BCARenderingContext *context, uint32_t *buffer, uint32_t color, BCAPoint *point) {
+	BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, context.depth, color, point);
+}
+
+void BCASetPixelColorForContextAtPoint(BCARenderingContext *context, uint32_t color, BCAPoint *point) {
+	BCASetPixelColorForContextWithBufferAtPoint(context, context.pixelBuffer, color, point);
 }
 
 void BCADrawLineWithContext (BCARenderingContext *context,BCAPoint *p1, BCAPoint *p2, uint32_t *buffer, uint32_t color){
@@ -80,12 +94,12 @@ void BCADrawLineWithContext (BCARenderingContext *context,BCAPoint *p1, BCAPoint
 }
 
 void BCAFillTriangleWithContext(BCAPoint *p1, BCAPoint *p2, BCAPoint *p3, uint32_t color, BCARenderingContext *context){
-	BCAPoint *tip;
-	BCAPoint *bottom1;
-	BCAPoint *bottom2;
+	BCAPoint *tip = nil;
+	BCAPoint *bottom1 = nil;
+	BCAPoint *bottom2 = nil;
 	
-	BCAPoint *high;
-	BCAPoint *low;
+	BCAPoint *high = nil;
+	BCAPoint *low = nil;
 	
 	if (p1.x == p2.x) {
 		if (p1.y < p2.y) {
@@ -302,21 +316,21 @@ void BCAFillTriangleWithContext(BCAPoint *p1, BCAPoint *p2, BCAPoint *p3, uint32
 	}
 }
 
-
-
+uint32_t BCAGetPixelFromContextAtPoint(BCARenderingContext *context, BCAPoint *point) {
+	uint32_t *buffer = context.pixelBuffer;
+	return buffer[(int)point.z * (int)(context.width * context.height) + (int)point.y * (int)context.width + (int)point.x];
+}
 
 uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 	// This is where your turn comes in. :-)
 	// allocate a uint32_t buffer of size context.width * context.height * sizeof(uint32_t)
 	//uint32_t buffer = context.width * context.height * sizeof(float);
 	// no
-	uint32_t *buffer = context.pixelBuffer;
+	uint32_t *buffer = malloc(sizeof(uint32_t) * (int)context.width * (int)context.height);
 	// make sense?
 	
 	bzero(buffer, sizeof(uint32_t) * context.width * context.height);
 	// fills `buffer` with 0s. so every pixel is by default black.
-	
-	uint32_t blueColor = 0x0000FFFF;
 	//					   rrggbbaa
 	// FF = red = 255
 	// FF = green = 255
@@ -339,11 +353,11 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 		
 		BCAPoint *p1 = vertices[0], *p2 = vertices[1], *p3 = vertices[2];
 		
-		BCADrawLineWithContext (context, p1, p2, buffer, blueColor);
-		BCADrawLineWithContext (context, p1, p3, buffer, blueColor);
-		BCADrawLineWithContext (context, p2, p3, buffer, blueColor);
+		BCADrawLineWithContext (context, p1, p2, context.pixelBuffer, blueColor);
+		BCADrawLineWithContext (context, p1, p3, context.pixelBuffer, blueColor);
+		BCADrawLineWithContext (context, p2, p3, context.pixelBuffer, blueColor);
 		
-		BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
+		BCAFillTriangleWithContext(p1, p2, p3, whiteColor, context);
 
 		
 		for (BCAPoint *point in vertices) {
@@ -361,6 +375,21 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 			// Ok! Now try to fill in points in the triangle, starrting with the permiters. :)
 			// You can declare the 3 points and do it outside of this loop if that will make it easier for you to do the math
 			
+		}
+	}
+	
+	for (int z = context.depth - 1; z >= 0; z--) {
+		for (int y = 0; y < context.height; y++) {
+			for (int x = 0; x < context.width; x++) {
+				uint32_t pixel = BCAGetPixelFromContextAtPoint(context, BCAPointMake(x, y, z));
+				
+				uint8_t alpha = (uint8_t)pixel;
+
+
+				if (alpha != 0) {
+					BCASetPixelColorForBufferAtPoint(buffer, context.width, context.height, 0, pixel, BCAPointMake(x, y, 0));
+				}
+			}
 		}
 	}
 	
