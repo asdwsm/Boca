@@ -10,12 +10,9 @@
 #define engine_h
 
 #include <stdio.h>
-
-#import "BCARenderingContext.h"
-#import "BCATriangle.h"
-#import "BCAPoint.h"
+#include "boca.h"
 
 BCARenderingContext *BCACreateRenderingContextWithDimensions(float width, float height, float depth);
-void BCAAddTriangleToContextWithVertices(BCARenderingContext *context, BCATriangle *vertices);
+void BCAAddPolygonToContext(BCARenderingContext *context, BCAPolygon *polygon);
 uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context);
 #endif /* engine_h */
