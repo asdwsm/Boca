@@ -145,6 +145,35 @@ __attribute__((always_inline)) inline void BCASetPixelColorForContextAtPoint(BCA
 	BCASetPixelColorForContextWithBufferAtPoint(context, context->buffer, color, point);
 }
 
+
+void BCADrawLineWithContext3D (BCARenderingContext *context, BCAPoint p1, BCAPoint p2, uint32_t color) {
+	
+	float incrementX = (p2.x - p1.x) / 100;
+	float incrementY = (-p2.y + p1.y) / 100;
+	float incrementZ = (p2.z - p1.z) / 100;
+	NSLog(@"Drawing");
+	NSLog(@"incrementX %f", incrementX);
+	NSLog(@"incrementY %f", incrementY);
+	NSLog(@"incrementZ %f", incrementZ);
+	
+	float startX = p1.x;
+	float startY = -p1.y;
+	float startZ = p1.z;
+	
+	while (startX != p2.x && startY != -p2.y && startZ != p2.z) {
+		BCAPoint newPoint = BCAPointMake(startX, startY, startZ);
+		NSLog(@"Point %f %f %f", newPoint.x, newPoint.y, newPoint.z);
+		BCASetPixelColorForContextAtPoint(context, blueColor, newPoint);
+		startX = startX + incrementX;
+		startY = startY + incrementY;
+		startZ = startZ + incrementZ;
+	}
+	
+	
+}
+
+
+
 void BCADrawLineWithContext (BCARenderingContext *context, BCAPoint p1, BCAPoint p2, uint32_t color) {
 	
 	if (p1.x > p2.x) {
@@ -344,7 +373,7 @@ void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t 
 //	NSLog(@"tip %@", tip);
 //	NSLog(@"BOTTOM1 %@", bottom1);
 //	NSLog(@"BOTTOM2 %@", bottom2);
-	//when tip on top
+//	when tip on top
 	
 	if (tip.x == high.x && tip.y == high.y) {
 		float m1 = (-bottom1.y + high.y) / (bottom1.x - high.x);
@@ -447,6 +476,12 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 		}
 	}
 	
+	
+	BCAPoint p1 = BCAPointMake(100, 40, 70);
+	BCAPoint p2 = BCAPointMake(50, 50, 6);
+	
+	BCADrawLineWithContext3D(context, p1, p2, blueColor);
+	
 
 //	
 //	for (BCATriangle *triangle in triangles) {
@@ -487,7 +522,6 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 				uint32_t pixel = BCAGetPixelFromBufferWithSizeAtPoint(context->buffer, context->width, context->height, context->depth, x, y, z);
 				
 				uint8_t alpha = (uint8_t)pixel;
-
 
 				if (alpha != 0) {
 					BCASetPixelColorForBufferAtPoint(buffer, context->width, context->height, 0, pixel, BCAPointMake(x, y, 0));
