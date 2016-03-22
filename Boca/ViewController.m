@@ -36,7 +36,7 @@
 	
 	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight, 100);
 
-	for (int i = 0; i < 2; i++)
+	//for (int i = 0; i < 5; i++)
 		[self pushRandomTriangle];
 //	for (int i = 0; i < 300; i++) {
 //		[self pushRandomRectangle];

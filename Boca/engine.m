@@ -29,6 +29,7 @@ BCAPolygon *BCAPolygonWithColorAndPoints3(uint32_t c, BCAPoint p1, BCAPoint p2, 
 	region[1] = p2;
 	region[2] = p3;
 	triangle->points = region;
+	triangle->color = c;
 	
 	polygon->triangles = triangle;
 	polygon->triangleCount = 1;
@@ -105,11 +106,13 @@ BCARenderingContext *BCACreateRenderingContextWithDimensions(float width, float 
 
 void BCAAddPolygonToContext(BCARenderingContext *context, BCAPolygon *polygon) {
 	if (!context->polygons) {
-		context->polygons = calloc(sizeof(BCAPolygon *) * 5, 1); // extra space. Can be resized later.
+		context->polygons = calloc(sizeof(BCAPolygon) * 5, 1); // extra space. Can be resized later.
 		context->availableSpace = 5;
 	}
 	
 	int placement = context->polygonCount;
+	
+	NSLog(@"Pg: %d, avail: %d", context->polygonCount, context->availableSpace);
 	
 	if (context->availableSpace > 0) {
 		context->polygons[placement] = *polygon;
@@ -124,7 +127,7 @@ void BCAAddPolygonToContext(BCARenderingContext *context, BCAPolygon *polygon) {
 	}
 }
 
-void BCASetPixelColorForBufferAtPoint(uint32_t *buffer, float width, float height, float depth, uint32_t color, BCAPoint point) {
+__attribute__((always_inline)) inline void BCASetPixelColorForBufferAtPoint(uint32_t *buffer, float width, float height, float depth, uint32_t color, BCAPoint point) {
 
 	if (point.x > width	|| point.x < 0 || point.y > height || point.y < 0 || point.z > depth || point.z < 0) {
 //		NSLog(@"BAD COORDINATES. %s", BCAStringFromPoint(point));
@@ -134,17 +137,17 @@ void BCASetPixelColorForBufferAtPoint(uint32_t *buffer, float width, float heigh
 	buffer[(int)(width * height) * (int)point.z + (int)point.y * (int)width + (int)point.x] = color;
 }
 
-void BCASetPixelColorForContextWithBufferAtPoint(BCARenderingContext *context, uint32_t *buffer, uint32_t color, BCAPoint point) {
+__attribute__((always_inline)) inline void BCASetPixelColorForContextWithBufferAtPoint(BCARenderingContext *context, uint32_t *buffer, uint32_t color, BCAPoint point) {
 	BCASetPixelColorForBufferAtPoint(buffer, context->width, context->height, context->depth, color, point);
 }
 
-void BCASetPixelColorForContextAtPoint(BCARenderingContext *context, uint32_t color, BCAPoint point) {
+__attribute__((always_inline)) inline void BCASetPixelColorForContextAtPoint(BCARenderingContext *context, uint32_t color, BCAPoint point) {
 	BCASetPixelColorForContextWithBufferAtPoint(context, context->buffer, color, point);
 }
 
 void BCADrawLineWithContext (BCARenderingContext *context, BCAPoint p1, BCAPoint p2, uint32_t color) {
 	
-	if(p1.x > p2.x){
+	if (p1.x > p2.x) {
 		BCAPoint tmp = p1;
 		p1 = p2;
 		p2 = tmp;
@@ -286,7 +289,6 @@ void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t 
 			bottom2 = p2;
 		}
 		float m = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
-		float distance = (m * p1.x + p1.y + (m * bottom1.x - bottom1.y) ) / sqrt(m * m + 1);
 
 		if (p1.y > fabsf(m * (p1.x - bottom1.x) - bottom1.y))
 			low = p1;
@@ -306,7 +308,6 @@ void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t 
 			bottom2 = p1;
 		}
 		float m = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
-		float distance = (m * p2.x + p2.y + (m * bottom1.x - bottom1.y) ) / sqrt(m * m + 1);
 
 		if (p2.y > fabsf(m * (p2.x - bottom1.x) - bottom1.y))
 			low = p2;
@@ -344,13 +345,14 @@ void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t 
 //	NSLog(@"BOTTOM1 %@", bottom1);
 //	NSLog(@"BOTTOM2 %@", bottom2);
 	//when tip on top
+	
 	if (tip.x == high.x && tip.y == high.y) {
 		float m1 = (-bottom1.y + high.y) / (bottom1.x - high.x);
 		float m2 = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
 		float m3 = (-bottom2.y + high.y) / (bottom2.x - high.x);
-//		
-//		NSLog(@"m1 %f", m1);
-//		NSLog(@"m2 %f", m2);
+		//
+		//		NSLog(@"m1 %f", m1);
+		//		NSLog(@"m2 %f", m2);
 		
 		for (int i = bottom1.x; i < bottom2.x; i++) {
 			
@@ -380,9 +382,9 @@ void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t 
 		float m1 = (-bottom1.y + low.y) / (bottom1.x - low.x);
 		float m2 = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
 		float m3 = (-bottom2.y + low.y) / (bottom2.x - low.x);
-//		
-//		NSLog(@"m1 %f", m1);
-//		NSLog(@"m2 %f", m2);
+		//
+		//		NSLog(@"m1 %f", m1);
+		//		NSLog(@"m2 %f", m2);
 		
 		for (int i = bottom1.x; i < bottom2.x; i++) {
 			
@@ -427,30 +429,22 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 	// 00 = blue = 0
 	// FF = alpha = 255 (not transparent, opaque)
 	
-	BCATriangle *triangles = calloc(sizeof(BCATriangle) * context->polygonCount * 3, 1);
-	// Probably a bad guess on size. Can be resized as needed later.
-	int triangleCount = 0;
 	
 	for (int i = 0; i < context->polygonCount; i++) {
 		BCAPolygon polygon = context->polygons[i];
 		for (int j = 0; j < polygon.triangleCount; j++) {
-			triangles[triangleCount] = polygon.triangles[j];
-			triangleCount++;
+			BCATriangle triangle = polygon.triangles[j];
+			
+			BCAPoint p1 = triangle.points[0];
+			BCAPoint p2 = triangle.points[1];
+			BCAPoint p3 = triangle.points[2];
+			BCADrawLineWithContext(context, p1, p2, blueColor);
+			BCADrawLineWithContext(context, p1, p3, blueColor);
+			BCADrawLineWithContext(context, p2, p3, blueColor);
+			
+			BCAFillTriangleWithContext(p1, p2, p3, triangle.color, context);
+			
 		}
-	}
-	
-	for (int i = 0; i < triangleCount; i++) {
-		BCATriangle triangle = triangles[i];
-		NSLog(@"triangle found with vertices (%f,%f,%f),(%f,%f,%f),(%f,%f,%f)", triangle.points[0].x, triangle.points[0].y, triangle.points[0].z, triangle.points[1].x, triangle.points[1].y, triangle.points[1].z, triangle.points[2].x, triangle.points[2].y, triangle.points[2].z);
-		
-		BCAPoint p1 = triangle.points[0];
-		BCAPoint p2 = triangle.points[1];
-		BCAPoint p3 = triangle.points[2];
-		BCADrawLineWithContext(context, p1, p2, blueColor);
-		BCADrawLineWithContext(context, p1, p3, blueColor);
-		BCADrawLineWithContext(context, p2, p3, blueColor);
-		
-		BCAFillTriangleWithContext(p1, p2, p3, whiteColor, context);
 	}
 	
 

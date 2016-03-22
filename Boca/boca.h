@@ -17,6 +17,7 @@ typedef struct BCAPoint {
 
 typedef struct BCATriangle {
 	BCAPoint *points;
+	uint32_t color;
 } BCATriangle;
 
 typedef struct BCAPolygon {
