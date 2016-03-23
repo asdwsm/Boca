@@ -145,76 +145,139 @@ __attribute__((always_inline)) inline void BCASetPixelColorForContextAtPoint(BCA
 	BCASetPixelColorForContextWithBufferAtPoint(context, context->buffer, color, point);
 }
 
-
-void BCADrawLineWithContext3D (BCARenderingContext *context, BCAPoint p1, BCAPoint p2, uint32_t color) {
+void BCADrawLineWithContext (BCARenderingContext *context, BCAPoint p1, BCAPoint p2, uint32_t color) {
+	float n = 500.0;
+	float incrementX = (p2.x - p1.x) / n;
+	float incrementY = (-p2.y + p1.y) / n;
+	float incrementZ = (p2.z - p1.z) / n;
 	
-	float incrementX = (p2.x - p1.x) / 100;
-	float incrementY = (-p2.y + p1.y) / 100;
-	float incrementZ = (p2.z - p1.z) / 100;
-	NSLog(@"Drawing");
-	NSLog(@"incrementX %f", incrementX);
-	NSLog(@"incrementY %f", incrementY);
-	NSLog(@"incrementZ %f", incrementZ);
+	//NSLog(@"Drawing");
+	//NSLog(@"incrementX %f", incrementX);
+	//NSLog(@"incrementY %f", incrementY);
+	//NSLog(@"incrementZ %f", incrementZ);
 	
 	float startX = p1.x;
 	float startY = -p1.y;
 	float startZ = p1.z;
+	int incrementTimes = 0;
 	
-	while (startX != p2.x && startY != -p2.y && startZ != p2.z) {
-		BCAPoint newPoint = BCAPointMake(startX, startY, startZ);
-		NSLog(@"Point %f %f %f", newPoint.x, newPoint.y, newPoint.z);
+	while (incrementTimes != n) {
+		BCAPoint newPoint = BCAPointMake(startX, fabsf(startY), startZ);
+		//NSLog(@"Point %f %f %f", newPoint.x, newPoint.y, newPoint.z);
 		BCASetPixelColorForContextAtPoint(context, blueColor, newPoint);
 		startX = startX + incrementX;
 		startY = startY + incrementY;
 		startZ = startZ + incrementZ;
+		incrementTimes++;
 	}
-	
-	
+}
+
+BCAPoint BCACrossProduct(BCAPoint a, BCAPoint b){
+	BCAPoint crossProduct = BCAPointMake((a.y * b.z - a.z * b.y), (a.z * b.x - a.x * b.z), (a.x * b.y - a.y * b.x));
+	return crossProduct;
 }
 
 
+void BCAFillTriangleWithContext3D(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t color, BCARenderingContext *context) {
 
-void BCADrawLineWithContext (BCARenderingContext *context, BCAPoint p1, BCAPoint p2, uint32_t color) {
-	
-	if (p1.x > p2.x) {
-		BCAPoint tmp = p1;
-		p1 = p2;
-		p2 = tmp;
-	}
-	float slope = (-p2.y + p1.y) / (p2.x -p1.x);
-	//NSLog(@"Slope %f", slope);
-	if (p1.x == p2.x) {
-		if(p1.y < p2.y){
-			for (int i = p1.y; i < p2.y; i++) {
-				BCAPoint newPoint = BCAPointMake(p1.x, i, 0);
-				//NSLog(@"Inserting. %@", newPoint);
-				BCASetPixelColorForContextAtPoint(context, color, newPoint);
-			}
+	BCAPoint max, middle, min;
+	if (p1.x > p2.x && p1.x > p3.x) {
+		max = p1;
+		if (p2.x > p3.x) {
+			min = p3;
+			middle = p2;
 		}
 		else {
-			for (int i = p2.y; i < p1.y; i++) {
-				BCAPoint newPoint = BCAPointMake(p2.x, i, 0);
-				//NSLog(@"Inserting. %@", newPoint);
-				BCASetPixelColorForContextAtPoint(context, color, newPoint);
-			}
+			min = p2;
+			middle = p3;
 		}
 	}
-	else if (p2.y - p1.y > 0) {
-		for (double i = p2.x; i > p1.x; i = i - 0.5) {
-			BCAPoint newPoint = BCAPointMake(i, fabs(slope * (i - p1.x) - p1.y), 0);
-			
-			//NSLog(@"Inserting. %@", newPoint);
-			BCASetPixelColorForContextAtPoint(context, color, newPoint);
+	
+	if (p2.x > p1.x && p2.x > p3.x) {
+		max = p2;
+		if (p1.x > p3.x) {
+			min = p3;
+			middle = p1;
+		}
+		else {
+			min = p1;
+			middle = p3;
 		}
 	}
-	else {
-		for (double i = p1.x; i < p2.x; i = i + 0.5) {
-			BCAPoint newPoint = BCAPointMake(i, fabs(slope * (i - p2.x) - p2.y), 0);
-			//NSLog(@"Inserting. %@", newPoint);
-			BCASetPixelColorForContextAtPoint(context, color, newPoint);
+	
+	if (p3.x > p1.x && p3.x > p2.x) {
+		max = p3;
+		if (p1.x > p2.x) {
+			min = p2;
+			middle = p1;
+		}
+		else {
+			min = p1;
+			middle = p2;
 		}
 	}
+	
+	NSLog(@"p1: %f %f %f", p1.x, p1.y, p1.z);
+	NSLog(@"p2: %f %f %f", p2.x, p2.y, p2.z);
+	NSLog(@"p3: %f %f %f", p3.x, p3.y, p3.z);
+
+	
+	float n = 500.0;
+	
+	float minToMiddleX = (middle.x - min.x) / n;
+	float minToMiddleY = (-middle.y + min.y) / n;
+	float minToMiddleZ = (middle.z - min.z) / n;
+	
+	//float minToMaxX = (max.x - min.x) / 200.0;
+	float minToMaxY = (-max.y + min.y) / (n / (middle.x - min.x) * (max.x - min.x));
+	float minToMaxZ = (max.z - min.z) / (n / (middle.x - min.x) * (max.x - min.x));
+	
+	float minToMaxY2 = (-max.y + min.y) / (n / (max.x - middle.x) * (max.x - min.x));
+	float minToMaxZ2 = (-max.z + min.z) / (n / (max.x - middle.x) * (max.x - min.x));
+	
+	float middleToMaxX = (max.x - middle.x) / n;
+	float middleToMaxY = (-max.y + middle.y) / n;
+	float middleToMaxZ = (max.z - middle.z) / n;
+	
+	float startX = min.x;
+	float startMinY1 = min.y;
+	float startMinY2 = min.y;
+	float startMinZ1 = min.z;
+	float startMinZ2 = min.z;
+	
+	
+	while (startX <= middle.x) {
+		BCAPoint newPoint1 = BCAPointMake(startX, fabsf(startMinY1), startMinZ1);
+		BCAPoint newPoint2 = BCAPointMake(startX, fabsf(startMinY2), startMinZ2);
+		
+		startX += minToMiddleX;
+		startMinY1 -= minToMiddleY;
+		startMinY2 -= minToMaxY;
+		startMinZ1 += minToMiddleZ;
+		startMinZ2 += minToMaxZ;
+		
+		BCADrawLineWithContext(context, newPoint1, newPoint2, color);
+	}
+	
+	while (startX <= max.x) {
+		BCAPoint newPoint1 = BCAPointMake(startX, fabsf(startMinY1), startMinZ1);
+		BCAPoint newPoint2 = BCAPointMake(startX, fabsf(startMinY2), startMinZ2);
+		
+		startX += middleToMaxX;
+		startMinY1 -= middleToMaxY;
+		startMinY2 -= minToMaxY2;
+		startMinZ1 += middleToMaxZ;
+		startMinZ2 += minToMaxZ2;
+		
+		
+		BCADrawLineWithContext(context, newPoint1, newPoint2, color);
+	}
+	
+	
+	
 }
+
+
 
 void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t color, BCARenderingContext *context) {
 	
@@ -471,17 +534,21 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 			BCADrawLineWithContext(context, p1, p3, blueColor);
 			BCADrawLineWithContext(context, p2, p3, blueColor);
 			
-			BCAFillTriangleWithContext(p1, p2, p3, triangle.color, context);
+			BCAFillTriangleWithContext3D(p1, p2, p3, triangle.color, context);
 			
 		}
 	}
 	
 	
-	BCAPoint p1 = BCAPointMake(100, 40, 70);
-	BCAPoint p2 = BCAPointMake(50, 50, 6);
+	//BCAPoint p1 = BCAPointMake(60, 174, 0);
+	//BCAPoint p2 = BCAPointMake(131, 195, 0);
+	//BCAPoint p3 = BCAPointMake(145, 516, 0);
 	
-	BCADrawLineWithContext3D(context, p1, p2, blueColor);
+	//BCAFillTriangleWithContext3D(p1, p2, p3, blueColor, context);
 	
+	//BCASetPixelColorForContextAtPoint(context, whiteColor, p1);
+	//BCASetPixelColorForContextAtPoint(context, whiteColor, p2);
+	//BCASetPixelColorForContextAtPoint(context, whiteColor, p3);
 
 //	
 //	for (BCATriangle *triangle in triangles) {
