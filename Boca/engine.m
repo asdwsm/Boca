@@ -177,23 +177,255 @@ BCAPoint BCACrossProduct(BCAPoint a, BCAPoint b){
 	return crossProduct;
 }
 
-
-void BCAFillTriangleWithContext3D(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t color, BCARenderingContext *context) {
+void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t color, BCARenderingContext *context) {
 	
 	BCAPoint max, middle, min;
+	
+	float n = 500.0;
+	
 	if (p1.x == p2.x) {
 		if (p1.x > p3.x) {
 			min = p3;
 			max = p1;
 			middle = p2;
+			
+			float incrementXMinToMax = (max.x - min.x) / n;
+			float incrementYMinToMax = (-max.y + min.y) / n;
+			float incrementZMinToMax = (max.z - min.z) / n;
+			
+			float incrementYMinToMiddle = (-middle.y + min.y) / n;
+			float incrementZMinToMiddle = (middle.z - min.z) / n;
+			
+			float startX = min.x;
+			float startY1 = min.y;
+			float startZ1 = min.z;
+			float startY2 = min.y;
+			float startZ2 = min.z;
+		
+			while (startX <= max.x) {
+				BCAPoint newPoint1 = BCAPointMake(startX, fabsf(startY1), startZ1);
+				BCAPoint newPoint2 = BCAPointMake(startX, fabsf(startY2), startZ2);
+				
+				startX += incrementXMinToMax;
+				startY1 -= incrementYMinToMax;
+				startY2 -= incrementYMinToMiddle;
+				startZ1 += incrementZMinToMax;
+				startZ2 += incrementZMinToMiddle;
+				
+				BCADrawLineWithContext(context, newPoint1, newPoint2, color);
+				
+			}
+			return;
 		}
 		else {
 			min = p1;
 			middle = p2;
 			max = p3;
+			
+			float incrementXMinToMax = (max.x - min.x) / n;
+			float incrementYMinToMax = (-max.y + min.y) / n;
+			float incrementZMinToMax = (max.z - min.z) / n;
+			
+			float incrementYMiddleToMax = (-max.y + middle.y) / n;
+			float incrementZMiddleToMax = (max.z - middle.z) / n;
+			
+			float startX = min.x;
+			float startY1 = min.y;
+			float startZ1 = min.z;
+			float startY2 = middle.y;
+			float startZ2 = middle.z;
+			
+			NSLog(@"middle.y %f", middle.y);
+			NSLog(@"min.x %f", min.x);
+			
+			while (startX <= max.x) {
+				BCAPoint newPoint1 = BCAPointMake(startX, fabsf(startY1), startZ1);
+				BCAPoint newPoint2 = BCAPointMake(startX, fabsf(startY2), startZ2);
+				
+				startX += incrementXMinToMax;
+				startY1 -= incrementYMinToMax;
+				startY2 -= incrementYMiddleToMax;
+				startZ1 += incrementZMinToMax;
+				startZ2 += incrementZMiddleToMax;
+				
+				BCADrawLineWithContext(context, newPoint1, newPoint2, color);
+				
+			}
+			return;
+		}
+	}
+	
+	if (p1.x == p3.x) {
+		if (p1.x > p2.x) {
+			min = p2;
+			max = p1;
+			middle = p3;
+			
+			float incrementXMinToMax = (max.x - min.x) / n;
+			float incrementYMinToMax = (-max.y + min.y) / n;
+			float incrementZMinToMax = (max.z - min.z) / n;
+			
+			float incrementYMinToMiddle = (-middle.y + min.y) / n;
+			float incrementZMinToMiddle = (middle.z - min.z) / n;
+			
+			float startX = min.x;
+			float startY1 = min.y;
+			float startZ1 = min.z;
+			float startY2 = min.y;
+			float startZ2 = min.z;
+			
+			while (startX <= max.x) {
+				BCAPoint newPoint1 = BCAPointMake(startX, fabsf(startY1), startZ1);
+				BCAPoint newPoint2 = BCAPointMake(startX, fabsf(startY2), startZ2);
+				
+				startX += incrementXMinToMax;
+				startY1 -= incrementYMinToMax;
+				startY2 -= incrementYMinToMiddle;
+				startZ1 += incrementZMinToMax;
+				startZ2 += incrementZMinToMiddle;
+				
+				BCADrawLineWithContext(context, newPoint1, newPoint2, color);
+				
+			}
+			return;
+		}
+		else {
+			min = p1;
+			middle = p3;
+			max = p2;
+			
+			float incrementXMinToMax = (max.x - min.x) / n;
+			float incrementYMinToMax = (-max.y + min.y) / n;
+			float incrementZMinToMax = (max.z - min.z) / n;
+			
+			float incrementYMiddleToMax = (-max.y + middle.y) / n;
+			float incrementZMiddleToMax = (max.z - middle.z) / n;
+			
+			float startX = min.x;
+			float startY1 = min.y;
+			float startZ1 = min.z;
+			float startY2 = middle.y;
+			float startZ2 = middle.z;
+			
+			NSLog(@"middle.y %f", middle.y);
+			NSLog(@"min.x %f", min.x);
+			
+			while (startX <= max.x) {
+				BCAPoint newPoint1 = BCAPointMake(startX, fabsf(startY1), startZ1);
+				BCAPoint newPoint2 = BCAPointMake(startX, fabsf(startY2), startZ2);
+				
+				startX += incrementXMinToMax;
+				startY1 -= incrementYMinToMax;
+				startY2 -= incrementYMiddleToMax;
+				startZ1 += incrementZMinToMax;
+				startZ2 += incrementZMiddleToMax;
+				
+				BCADrawLineWithContext(context, newPoint1, newPoint2, color);
+				
+			}
+			return;
+		}
+	}
+	
+	if (p2.x == p3.x) {
+		if (p2.x > p1.x) {
+			min = p1;
+			max = p2;
+			middle = p3;
+			
+			float incrementXMinToMax = (max.x - min.x) / n;
+			float incrementYMinToMax = (-max.y + min.y) / n;
+			float incrementZMinToMax = (max.z - min.z) / n;
+			
+			float incrementYMinToMiddle = (-middle.y + min.y) / n;
+			float incrementZMinToMiddle = (middle.z - min.z) / n;
+			
+			float startX = min.x;
+			float startY1 = min.y;
+			float startZ1 = min.z;
+			float startY2 = min.y;
+			float startZ2 = min.z;
+			
+			while (startX <= max.x) {
+				BCAPoint newPoint1 = BCAPointMake(startX, fabsf(startY1), startZ1);
+				BCAPoint newPoint2 = BCAPointMake(startX, fabsf(startY2), startZ2);
+				
+				startX += incrementXMinToMax;
+				startY1 -= incrementYMinToMax;
+				startY2 -= incrementYMinToMiddle;
+				startZ1 += incrementZMinToMax;
+				startZ2 += incrementZMinToMiddle;
+				
+				BCADrawLineWithContext(context, newPoint1, newPoint2, color);
+				
+			}
+			return;
+		}
+		else {
+			min = p2;
+			middle = p3;
+			max = p1;
+			
+			float incrementXMinToMax = (max.x - min.x) / n;
+			float incrementYMinToMax = (-max.y + min.y) / n;
+			float incrementZMinToMax = (max.z - min.z) / n;
+			
+			float incrementYMiddleToMax = (-max.y + middle.y) / n;
+			float incrementZMiddleToMax = (max.z - middle.z) / n;
+			
+			float startX = min.x;
+			float startY1 = min.y;
+			float startZ1 = min.z;
+			float startY2 = middle.y;
+			float startZ2 = middle.z;
+			
+			NSLog(@"middle.y %f", middle.y);
+			NSLog(@"min.x %f", min.x);
+			
+			while (startX <= max.x) {
+				BCAPoint newPoint1 = BCAPointMake(startX, fabsf(startY1), startZ1);
+				BCAPoint newPoint2 = BCAPointMake(startX, fabsf(startY2), startZ2);
+				
+				startX += incrementXMinToMax;
+				startY1 -= incrementYMinToMax;
+				startY2 -= incrementYMiddleToMax;
+				startZ1 += incrementZMinToMax;
+				startZ2 += incrementZMiddleToMax;
+				
+				BCADrawLineWithContext(context, newPoint1, newPoint2, color);
+				
+			}
+			return;
 		}
 	}
 
+	
+	if (p1.x == p3.x) {
+		if (p1.x > p2.x) {
+			min = p2;
+			max = p1;
+			middle = p3;
+		}
+		else {
+			min = p1;
+			middle = p3;
+			max = p2;
+		}
+	}
+	
+	if (p2.x == p3.x) {
+		if (p2.x > p1.x) {
+			min = p1;
+			max = p2;
+			middle = p3;
+		}
+		else {
+			min = p2;
+			middle = p3;
+			max = p1;
+		}
+	}
+	
 	
 	if (p1.x > p2.x && p1.x > p3.x) {
 		max = p1;
@@ -235,7 +467,6 @@ void BCAFillTriangleWithContext3D(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_
 	NSLog(@"p2: %f %f %f", p2.x, p2.y, p2.z);
 	NSLog(@"p3: %f %f %f", p3.x, p3.y, p3.z);
 
-	float n = 500.0;
 	
 	float minToMiddleX = (middle.x - min.x) / n;
 	float minToMiddleY = (-middle.y + min.y) / n;
@@ -286,231 +517,6 @@ void BCAFillTriangleWithContext3D(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_
 	}
 }
 
-
-
-void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t color, BCARenderingContext *context) {
-	
-	BCAPoint tip;
-	BCAPoint bottom1;
-	BCAPoint bottom2;
-	
-	BCAPoint high;
-	BCAPoint low;
-	
-	if (p1.x == p2.x) {
-		if (p1.y < p2.y) {
-			tip = p1;
-			high = p1;
-			if (p2.x < p3.x) {
-				bottom1 = p2;
-				bottom2 = p3;
-			}
-			else {
-				bottom1 = p3;
-				bottom2 = p2;
-			}
-		}
-		else {
-			tip = p2;
-			high = p2;
-			if (p1.x < p3.x) {
-				bottom1 = p1;
-				bottom2 = p3;
-			}
-			else {
-				bottom1 = p3;
-				bottom2 = p1;
-			}
-		}
-	}
-	
-	if (p1.x == p3.x) {
-		if (p1.y < p3.y) {
-			tip = p1;
-			high = p1;
-			if (p3.x < p2.x) {
-				bottom1 = p3;
-				bottom2 = p2;
-			}
-			else {
-				bottom1 = p2;
-				bottom2 = p3;
-			}
-		}
-		else {
-			tip = p3;
-			high = p3;
-			if (p1.x < p2.x) {
-				bottom1 = p1;
-				bottom2 = p2;
-			}
-			else {
-				bottom1 = p2;
-				bottom2 = p1;
-			}
-		}
-	}
-	
-	if (p2.x == p3.x) {
-		if (p2.y < p3.y) {
-			tip = p2;
-			high = p2;
-			if (p3.x < p1.x) {
-				bottom1 = p3;
-				bottom2 = p1;
-			}
-			else {
-				bottom1 = p1;
-				bottom2 = p3;
-			}
-		}
-		else {
-			tip = p3;
-			high = p3;
-			if (p2.x < p1.x) {
-				bottom1 = p2;
-				bottom2 = p1;
-			}
-			else {
-				bottom1 = p1;
-				bottom2 = p2;
-			}
-		}
-	}
-
-	if ((p1.x > p2.x && p1.x < p3.x) || (p1.x > p3.x && p1.x < p2.x)) {
-		tip = p1;
-		
-		if (p2.x < p3.x) {
-			bottom1 = p2;
-			bottom2 = p3;
-		}
-		else {
-			bottom1 = p3;
-			bottom2 = p2;
-		}
-		float m = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
-
-		if (p1.y > fabsf(m * (p1.x - bottom1.x) - bottom1.y))
-			low = p1;
-		else
-			high = p1;
-	}
-	
-	if ((p2.x > p1.x && p2.x < p3.x) || (p2.x > p3.x && p2.x < p1.x)) {
-		tip = p2;
-
-		if (p1.x < p3.x) {
-			bottom1 = p1;
-			bottom2 = p3;
-		}
-		else {
-			bottom1 = p3;
-			bottom2 = p1;
-		}
-		float m = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
-
-		if (p2.y > fabsf(m * (p2.x - bottom1.x) - bottom1.y))
-			low = p2;
-		else
-			high = p2;
-	}
-	
-	
-	if ((p3.x > p2.x && p3.x < p1.x) || (p3.x > p1.x && p3.x < p2.x)) {
-		tip = p3;
-	
-		if (p1.x < p2.x) {
-			bottom1 = p1;
-			bottom2 = p2;
-		}
-		else {
-			bottom1 = p2;
-			bottom2 = p1;
-		}
-		float m = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
-
-		if (p3.y > fabsf(m * (p3.x - bottom1.x) - bottom1.y))
-			low = p3;
-		else
-			high = p3;
-	}
-
-	//try to fill in now
-//	NSLog(@"P1 %@", p1);
-//	NSLog(@"P2 %@", p2);
-//	NSLog(@"P3 %@", p3);
-//	NSLog(@"HIGH %@", high);
-//	NSLog(@"LOW %@", low);
-//	NSLog(@"tip %@", tip);
-//	NSLog(@"BOTTOM1 %@", bottom1);
-//	NSLog(@"BOTTOM2 %@", bottom2);
-//	when tip on top
-	
-	if (tip.x == high.x && tip.y == high.y) {
-		float m1 = (-bottom1.y + high.y) / (bottom1.x - high.x);
-		float m2 = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
-		float m3 = (-bottom2.y + high.y) / (bottom2.x - high.x);
-		//
-		//		NSLog(@"m1 %f", m1);
-		//		NSLog(@"m2 %f", m2);
-		
-		for (int i = bottom1.x; i < bottom2.x; i++) {
-			
-			float j = fabsf((m2 * (i - bottom1.x) - bottom1.y));
-			if (i < high.x) {
-				while (j > fabsf(m1 * (i - bottom1.x) - bottom1.y)) {
-					BCAPoint newPoint = BCAPointMake(i, j, 0);
-					//NSLog(@"Inserting. %@", newPoint);
-					BCASetPixelColorForContextAtPoint(context, color, newPoint);
-					j--;
-				}
-			}
-			else {
-				while (j > fabsf(m3 * (i - bottom2.x) - bottom2.y)) {
-					BCAPoint newPoint = BCAPointMake(i, j, 0);
-					//NSLog(@"Inserting. %@", newPoint);
-					BCASetPixelColorForContextAtPoint(context, color, newPoint);
-					j--;
-				}
-			}
-		}
-		
-	}
-	
-	//when tip on bot
-	if (tip.x == low.x && tip.y == low.y) {
-		float m1 = (-bottom1.y + low.y) / (bottom1.x - low.x);
-		float m2 = (-bottom1.y + bottom2.y) / (bottom1.x - bottom2.x);
-		float m3 = (-bottom2.y + low.y) / (bottom2.x - low.x);
-		//
-		//		NSLog(@"m1 %f", m1);
-		//		NSLog(@"m2 %f", m2);
-		
-		for (int i = bottom1.x; i < bottom2.x; i++) {
-			
-			float j = fabsf((m2 * (i - bottom1.x) - bottom1.y));
-			if (i < low.x) {
-				while (j < fabsf(m1 * (i - bottom1.x) - bottom1.y)) {
-					BCAPoint newPoint = BCAPointMake(i, j, 0);
-					//NSLog(@"Inserting. %@", newPoint);
-					BCASetPixelColorForContextAtPoint(context, color, newPoint);
-					j++;
-				}
-			}
-			else {
-				while (j < fabsf(m3 * (i - bottom2.x) - bottom2.y)) {
-					BCAPoint newPoint = BCAPointMake(i, j, 0);
-					//NSLog(@"Inserting. %@", newPoint);
-					BCASetPixelColorForContextAtPoint(context, color, newPoint);
-					j++;
-				}
-			}
-		}
-		
-	}
-}
-
 uint32_t BCAGetPixelFromBufferWithSizeAtPoint(uint32_t *buffer, float width, float height, float depth, float x, float y, float z) {
 	return buffer[(int)z * (int)(width * height) + (int)y * (int)width + (int)x];
 }
@@ -549,16 +555,24 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 	}
 	
 	
-	BCAPoint p1 = BCAPointMake(35, 100, 60);
-	BCAPoint p2 = BCAPointMake(5, 200, 50);
-	BCAPoint p3 = BCAPointMake(120, 200, 0);
+	BCAPoint p1 = BCAPointMake(6, 100, 50);
+	BCAPoint p2 = BCAPointMake(6, 200, 50);
+	BCAPoint p3 = BCAPointMake(120, 150, 0);
 	
-	BCAFillTriangleWithContext3D(p1, p2, p3, blueColor, context);
 	
-	BCAPoint p4 = BCAPointMake(100, 100, 0);
-	BCAPoint p5 = BCAPointMake(120, 200, 0);
-	BCAPoint p6 = BCAPointMake(10, 150, 50);
-	BCAFillTriangleWithContext3D(p4, p5, p6, whiteColor, context);
+	
+	BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
+	
+	BCAPoint p4 = BCAPointMake(120, 100, 50);
+	BCAPoint p5 = BCAPointMake(120, 200, 50);
+	BCAPoint p6 = BCAPointMake(10, 150, 0);
+	
+	BCASetPixelColorForContextAtPoint(context, whiteColor, p4);
+	BCASetPixelColorForContextAtPoint(context, whiteColor, p5);
+	BCASetPixelColorForContextAtPoint(context, whiteColor, p6);
+
+	
+	BCAFillTriangleWithContext(p4, p5, p6, whiteColor, context);
 	
 
 //	
