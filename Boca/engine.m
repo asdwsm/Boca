@@ -607,20 +607,38 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 //			
 //		}
 //	}
-//	
-	for (int z = context->depth - 1; z >= 0; z--) {
-		for (int y = 0; y < context->height; y++) {
-			for (int x = 0; x < context->width; x++) {
-				uint32_t pixel = BCAGetPixelFromBufferWithSizeAtPoint(context->buffer, context->width, context->height, context->depth, x, y, z);
+//
+	
+	float baseOffy = (BCAContextGetHeight(context)/2 - BCAContextGetDepth(context)/2);
+	
+	for (int y = 0; y < BCAContextGetHeight(context); y++) {
+		for (int z = 0; z < BCAContextGetDepth(context); z++) {
+			for (int x = 0; x < BCAContextGetWidth(context); x++) {
+				uint32_t pixel = BCAGetPixelFromBufferWithSizeAtPoint(context->buffer, BCAContextGetWidth(context), BCAContextGetHeight(context), BCAContextGetDepth(context), x, y, z);
 				
-				uint8_t alpha = (uint8_t)pixel;
-
+				uint8_t alpha = pixel;
 				if (alpha != 0) {
-					BCASetPixelColorForBufferAtPoint(buffer, context->width, context->height, 0, pixel, BCAPointMake(x, y, 0));
+					BCASetPixelColorForBufferAtPoint(buffer, BCAContextGetWidth(context), BCAContextGetHeight(context), BCAContextGetDepth(context), pixel, BCAPointMake(x, baseOffy + z, 0));
 				}
 			}
 		}
 	}
+
+	
+//	// normal perspective –
+//	for (int z = context->depth - 1; z >= 0; z--) {
+//		for (int y = 0; y < context->height; y++) {
+//			for (int x = 0; x < context->width; x++) {
+//				uint32_t pixel = BCAGetPixelFromBufferWithSizeAtPoint(context->buffer, context->width, context->height, context->depth, x, y, z);
+//				
+//				uint8_t alpha = (uint8_t)pixel;
+//
+//				if (alpha != 0) {
+//					BCASetPixelColorForBufferAtPoint(buffer, context->width, context->height, 0, pixel, BCAPointMake(x, y, 0));
+//				}
+//			}
+//		}
+//	}
 //
 //	// Let's test our code.
 //	

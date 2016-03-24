@@ -50,6 +50,55 @@
 	[drawingView setPixelBuffer:buffer];
 	
 	// Do any additional setup after loading the view, typically from a nib.
+	
+	
+	UIButton *upButton = [[UIButton alloc] init];
+	[upButton setTitle:@"^" forState:UIControlStateNormal];
+	[upButton addTarget:self action:@selector(buttonPressUp:) forControlEvents:UIControlEventTouchUpInside];
+	[upButton setFrame:CGRectMake(280, 600, 30, 30)];
+	[upButton setBackgroundColor:[UIColor grayColor]];
+	[self.view addSubview:upButton];
+	
+	UIButton *leftButton = [[UIButton alloc] init];
+	[leftButton setTitle:@"<" forState:UIControlStateNormal];
+	[leftButton addTarget:self action:@selector(buttonPressLeft:) forControlEvents:UIControlEventTouchUpInside];
+	[leftButton setFrame:CGRectMake(250, 615, 30, 30)];
+	[leftButton setBackgroundColor:[UIColor grayColor]];
+	[self.view addSubview:leftButton];
+	
+	UIButton *rightButton = [[UIButton alloc] init];
+	[rightButton setTitle:@">" forState:UIControlStateNormal];
+	[rightButton addTarget:self action:@selector(buttonPressRight:) forControlEvents:UIControlEventTouchUpInside];
+	[rightButton setFrame:CGRectMake(310, 615, 30, 30)];
+	[rightButton setBackgroundColor:[UIColor grayColor]];
+	[self.view addSubview:rightButton];
+	
+	UIButton *downButton = [[UIButton alloc] init];
+	[downButton setTitle:@"v" forState:UIControlStateNormal];
+	[downButton addTarget:self action:@selector(buttonPressDown:) forControlEvents:UIControlEventTouchUpInside];
+	[downButton setFrame:CGRectMake(280, 630, 30, 30)];
+	[downButton setBackgroundColor:[UIColor grayColor]];
+	[self.view addSubview:downButton];
+	
+}
+
+- (void)buttonPressDown:(UIButton *)b {
+	BCAContextOrientation orientation = context->orientation; // write accessor/setter for this
+	switch (orientation) {
+
+	}
+}
+
+- (void)buttonPressRight:(UIButton *)b {
+	
+}
+
+- (void)buttonPressLeft:(UIButton *)b {
+	
+}
+
+- (void)buttonPressUp:(UIButton *)b {
+	
 }
 
 - (void)pushRandomRectangle {

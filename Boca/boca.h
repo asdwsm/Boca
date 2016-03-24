@@ -9,6 +9,19 @@
 #ifndef boca_h
 #define boca_h
 
+// drre6375
+
+enum BCAContextOrientation {
+	BCAContextOrientationFront = 0,
+	BCAContextOrientationBack,
+	BCAContextOrientationSideLeft,
+	BCAContextOrientationSideRight,
+	BCAContextOrientationTop,
+	BCAContextOrientationBottom, // this is all for now.
+};
+
+typedef int BCAContextOrientation;
+
 typedef struct BCAPoint {
 	float x;
 	float y;
@@ -36,6 +49,8 @@ typedef struct BCARenderingContext {
 	int polygonCount;
 	int availableSpace;
 	uint32_t *buffer;
+	BCAContextOrientation orientation;
+	
 } BCARenderingContext; // internally mutable
 
 BCAPolygon *BCAPolygonWithColorAndPoints3(uint32_t c, BCAPoint p1, BCAPoint p2, BCAPoint p3);
