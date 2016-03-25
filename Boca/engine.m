@@ -122,8 +122,11 @@ void BCAAddPolygonToContext(BCARenderingContext *context, BCAPolygon *polygon) {
 	}
 	
 	else {
-		NSLog(@"NEEDS RESIZE.");
-		
+		// Off-by-one errors most likely exist in this whole scheme. ;p
+		context->polygons = realloc(context->polygons, sizeof(BCAPolygon) * (context->polygonCount + 5));
+		context->polygonCount++;
+		context->availableSpace += 4;
+		context->polygons[placement] = *polygon;
 	}
 }
 
@@ -545,34 +548,34 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 			BCAPoint p1 = triangle.points[0];
 			BCAPoint p2 = triangle.points[1];
 			BCAPoint p3 = triangle.points[2];
-			//BCADrawLineWithContext(context, p1, p2, blueColor);
-			//BCADrawLineWithContext(context, p1, p3, blueColor);
-			//BCADrawLineWithContext(context, p2, p3, blueColor);
+			BCADrawLineWithContext(context, p1, p2, blueColor);
+			BCADrawLineWithContext(context, p1, p3, blueColor);
+			BCADrawLineWithContext(context, p2, p3, blueColor);
 			
-			//BCAFillTriangleWithContext3D(p1, p2, p3, triangle.color, context);
+			BCAFillTriangleWithContext(p1, p2, p3, triangle.color, context);
 			
 		}
 	}
 	
 	
-	BCAPoint p1 = BCAPointMake(6, 100, 50);
-	BCAPoint p2 = BCAPointMake(6, 200, 50);
-	BCAPoint p3 = BCAPointMake(120, 150, 0);
-	
-	
-	
-	BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
-	
-	BCAPoint p4 = BCAPointMake(120, 100, 50);
-	BCAPoint p5 = BCAPointMake(120, 200, 50);
-	BCAPoint p6 = BCAPointMake(10, 150, 0);
-	
-	BCASetPixelColorForContextAtPoint(context, whiteColor, p4);
-	BCASetPixelColorForContextAtPoint(context, whiteColor, p5);
-	BCASetPixelColorForContextAtPoint(context, whiteColor, p6);
-
-	
-	BCAFillTriangleWithContext(p4, p5, p6, whiteColor, context);
+//	BCAPoint p1 = BCAPointMake(6, 100, 50);
+//	BCAPoint p2 = BCAPointMake(6, 200, 50);
+//	BCAPoint p3 = BCAPointMake(120, 150, 0);
+//	
+//	
+//	
+//	BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
+//	
+//	BCAPoint p4 = BCAPointMake(120, 100, 50);
+//	BCAPoint p5 = BCAPointMake(120, 200, 50);
+//	BCAPoint p6 = BCAPointMake(10, 150, 0);
+//	
+//	BCASetPixelColorForContextAtPoint(context, whiteColor, p4);
+//	BCASetPixelColorForContextAtPoint(context, whiteColor, p5);
+//	BCASetPixelColorForContextAtPoint(context, whiteColor, p6);
+//
+//	
+//	BCAFillTriangleWithContext(p4, p5, p6, whiteColor, context);
 	
 
 //	
@@ -608,38 +611,38 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 //		}
 //	}
 //
-	
-	float baseOffy = (BCAContextGetHeight(context)/2 - BCAContextGetDepth(context)/2);
-	
-	for (int y = 0; y < BCAContextGetHeight(context); y++) {
-		for (int z = 0; z < BCAContextGetDepth(context); z++) {
-			for (int x = 0; x < BCAContextGetWidth(context); x++) {
-				uint32_t pixel = BCAGetPixelFromBufferWithSizeAtPoint(context->buffer, BCAContextGetWidth(context), BCAContextGetHeight(context), BCAContextGetDepth(context), x, y, z);
-				
-				uint8_t alpha = pixel;
-				if (alpha != 0) {
-					BCASetPixelColorForBufferAtPoint(buffer, BCAContextGetWidth(context), BCAContextGetHeight(context), BCAContextGetDepth(context), pixel, BCAPointMake(x, baseOffy + z, 0));
-				}
-			}
-		}
-	}
-
-	
-//	// normal perspective –
-//	for (int z = context->depth - 1; z >= 0; z--) {
-//		for (int y = 0; y < context->height; y++) {
-//			for (int x = 0; x < context->width; x++) {
-//				uint32_t pixel = BCAGetPixelFromBufferWithSizeAtPoint(context->buffer, context->width, context->height, context->depth, x, y, z);
+//	
+//	float baseOffy = (BCAContextGetHeight(context)/2 - BCAContextGetDepth(context)/2);
+//	
+//	for (int y = 0; y < BCAContextGetHeight(context); y++) {
+//		for (int z = 0; z < BCAContextGetDepth(context); z++) {
+//			for (int x = 0; x < BCAContextGetWidth(context); x++) {
+//				uint32_t pixel = BCAGetPixelFromBufferWithSizeAtPoint(context->buffer, BCAContextGetWidth(context), BCAContextGetHeight(context), BCAContextGetDepth(context), x, y, z);
 //				
-//				uint8_t alpha = (uint8_t)pixel;
-//
+//				uint8_t alpha = pixel;
 //				if (alpha != 0) {
-//					BCASetPixelColorForBufferAtPoint(buffer, context->width, context->height, 0, pixel, BCAPointMake(x, y, 0));
+//					BCASetPixelColorForBufferAtPoint(buffer, BCAContextGetWidth(context), BCAContextGetHeight(context), BCAContextGetDepth(context), pixel, BCAPointMake(x, baseOffy + z, 0));
 //				}
 //			}
 //		}
 //	}
 //
+//	
+//	// normal perspective –
+	for (int z = context->depth - 1; z >= 0; z--) {
+		for (int y = 0; y < context->height; y++) {
+			for (int x = 0; x < context->width; x++) {
+				uint32_t pixel = BCAGetPixelFromBufferWithSizeAtPoint(context->buffer, context->width, context->height, context->depth, x, y, z);
+				
+				uint8_t alpha = (uint8_t)pixel;
+
+				if (alpha != 0) {
+					BCASetPixelColorForBufferAtPoint(buffer, context->width, context->height, 0, pixel, BCAPointMake(x, y, 0));
+				}
+			}
+		}
+	}
+
 //	// Let's test our code.
 //	
 	return buffer;

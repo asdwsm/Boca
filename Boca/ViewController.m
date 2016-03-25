@@ -36,7 +36,7 @@
 	
 	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight, 100);
 
-	//for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++)
 		[self pushRandomTriangle];
 //	for (int i = 0; i < 300; i++) {
 //		[self pushRandomRectangle];
@@ -147,21 +147,30 @@
 	
 	int width = (int)BCAContextGetWidth(context);
 	int height = (int)BCAContextGetHeight(context);
+	int depth = (int)BCAContextGetDepth(context);
 	
 	BCAPoint *points = malloc(sizeof(BCAPoint) * 3);
 	
+	uint32_t color = 0x000000FF;
 	
 	for (int i = 0; i < 3; i++) {
 		int ranX = arc4random() % (width - 1);
 		int ranY = arc4random() % (height - 1);
+		int ranZ = arc4random() % (depth - 1);
 		
-		points[i] = BCAPointMake(ranX, ranY, 0);
+		points[i] = BCAPointMake(ranX, ranY, ranZ);
+		
+		int ranRed = arc4random() % 255;
+		int ranGreen = arc4random() % 255;
+		int ranBlue = arc4random() % 255;
+		
+		color = (ranRed << 24) + (ranGreen << 16) + (ranBlue << 8) + 0xFF;
 		
 	}
 	
 	NSLog(@"(%f,%f,%f)(%f,%f,%f)(%f,%f,%f)", points[0].x, points[0].y, points[0].z, points[1].x, points[1].y, points[1].z, points[2].x, points[2].y, points[3].z);
 	
-	BCAPolygon *triangle = BCAPolygonWithColorAndPoints3(0xFF0000FF, points[0], points[1], points[2]);
+	BCAPolygon *triangle = BCAPolygonWithColorAndPoints3(color, points[0], points[1], points[2]);
 	
 	BCAAddPolygonToContext(context, triangle);
 }
