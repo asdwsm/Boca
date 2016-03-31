@@ -524,6 +524,41 @@ uint32_t BCAGetPixelFromBufferWithSizeAtPoint(uint32_t *buffer, float width, flo
 	return buffer[(int)z * (int)(width * height) + (int)y * (int)width + (int)x];
 }
 
+BCAPoint BCAPerspectiveTransformationAroundX (BCAPoint point){
+	BCAPoint newPoint;
+	double angle = 90.0;
+	double val = M_PI / 180.0;
+	
+	newPoint = BCAPointMake(fabs(point.x), fabs(cos(angle * val) * -point.y - sin(angle * val) * point.z), fabs(sin(angle * val) * -point.y + cos(angle * val) * point.z));
+
+	return newPoint;
+}
+
+BCAPoint BCAPerspectiveTransformationAroundY (BCAPoint point){
+	BCAPoint newPoint;
+	double angle = 0.0;
+	double val = M_PI / 180.0;
+	
+	newPoint = BCAPointMake(fabs(cos(angle * val) * point.x + sin(angle * val) * point.z), fabs(-point.y), fabs(-sin(angle * val) * point.x + cos(angle * val) * point.z));
+	
+	return newPoint;
+}
+
+BCAPoint BCAPerspectiveTransformationAroundZ (BCAPoint point){
+	BCAPoint newPoint;
+	double angle = 0.0;
+	double val = M_PI / 180.0;
+	
+	newPoint = BCAPointMake(fabs(cos(angle * val) * point.x - sin(angle * val) * -point.y), fabs(sin(angle * val) * point.x + cos(angle * val) * -point.y), point.z);
+	
+	return newPoint;
+}
+
+
+
+
+
+
 uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 	// This is where your turn comes in. :-)
 	// allocate a uint32_t buffer of size context.width * context.height * sizeof(uint32_t)
@@ -548,24 +583,31 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 			BCAPoint p1 = triangle.points[0];
 			BCAPoint p2 = triangle.points[1];
 			BCAPoint p3 = triangle.points[2];
-			BCADrawLineWithContext(context, p1, p2, blueColor);
-			BCADrawLineWithContext(context, p1, p3, blueColor);
-			BCADrawLineWithContext(context, p2, p3, blueColor);
+			//BCADrawLineWithContext(context, p1, p2, blueColor);
+			//BCADrawLineWithContext(context, p1, p3, blueColor);
+			//BCADrawLineWithContext(context, p2, p3, blueColor);
 			
-			BCAFillTriangleWithContext(p1, p2, p3, triangle.color, context);
+			//BCAFillTriangleWithContext(p1, p2, p3, triangle.color, context);
 			
 		}
 	}
 	
 	
-//	BCAPoint p1 = BCAPointMake(6, 100, 50);
-//	BCAPoint p2 = BCAPointMake(6, 200, 50);
-//	BCAPoint p3 = BCAPointMake(120, 150, 0);
-//	
-//	
-//	
-//	BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
-//	
+	BCAPoint p1 = BCAPointMake(6, 100, 50);
+	BCAPoint p2 = BCAPointMake(6, 200, 50);
+	BCAPoint p3 = BCAPointMake(120, 150, 0);
+	
+	NSLog(@"p1: %f %f %f", BCAPerspectiveTransformationAroundY(p1).x, BCAPerspectiveTransformationAroundY(p1).y, BCAPerspectiveTransformationAroundY(p1).z);
+	NSLog(@"p2: %f %f %f", BCAPerspectiveTransformationAroundX(p2).x, BCAPerspectiveTransformationAroundY(p2).y, BCAPerspectiveTransformationAroundY(p2).z);
+	NSLog(@"p3: %f %f %f", BCAPerspectiveTransformationAroundX(p3).x, BCAPerspectiveTransformationAroundY(p3).y, BCAPerspectiveTransformationAroundY(p3).z);
+	
+	BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p1));
+	BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p2));
+	BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p3));
+
+	//BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
+	BCAFillTriangleWithContext(BCAPerspectiveTransformationAroundY(p1), BCAPerspectiveTransformationAroundY(p2), BCAPerspectiveTransformationAroundY(p3), blueColor, context);
+	
 //	BCAPoint p4 = BCAPointMake(120, 100, 50);
 //	BCAPoint p5 = BCAPointMake(120, 200, 50);
 //	BCAPoint p6 = BCAPointMake(10, 150, 0);
@@ -628,20 +670,21 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 //	}
 //
 //	
-//	// normal perspective –
+	//normal perspective –
 	for (int z = context->depth - 1; z >= 0; z--) {
 		for (int y = 0; y < context->height; y++) {
 			for (int x = 0; x < context->width; x++) {
 				uint32_t pixel = BCAGetPixelFromBufferWithSizeAtPoint(context->buffer, context->width, context->height, context->depth, x, y, z);
-				
-				uint8_t alpha = (uint8_t)pixel;
 
+				uint8_t alpha = (uint8_t)pixel;
 				if (alpha != 0) {
 					BCASetPixelColorForBufferAtPoint(buffer, context->width, context->height, 0, pixel, BCAPointMake(x, y, 0));
 				}
 			}
-		}
-	}
+		}	}
+	
+	
+	
 
 //	// Let's test our code.
 //	
