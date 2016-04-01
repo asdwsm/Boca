@@ -524,9 +524,9 @@ uint32_t BCAGetPixelFromBufferWithSizeAtPoint(uint32_t *buffer, float width, flo
 	return buffer[(int)z * (int)(width * height) + (int)y * (int)width + (int)x];
 }
 
-BCAPoint BCAPerspectiveTransformationAroundX (BCAPoint point){
+BCAPoint BCAPerspectiveTransformationAroundX (BCAPoint point, double angle){
 	BCAPoint newPoint;
-	double angle = 90.0;
+	//double angle = 90.0;
 	double val = M_PI / 180.0;
 	
 	newPoint = BCAPointMake(fabs(point.x), fabs(cos(angle * val) * -point.y - sin(angle * val) * point.z), fabs(sin(angle * val) * -point.y + cos(angle * val) * point.z));
@@ -534,9 +534,9 @@ BCAPoint BCAPerspectiveTransformationAroundX (BCAPoint point){
 	return newPoint;
 }
 
-BCAPoint BCAPerspectiveTransformationAroundY (BCAPoint point){
+BCAPoint BCAPerspectiveTransformationAroundY (BCAPoint point, double angle){
 	BCAPoint newPoint;
-	double angle = 0.0;
+	//double angle = 50.0;
 	double val = M_PI / 180.0;
 	
 	newPoint = BCAPointMake(fabs(cos(angle * val) * point.x + sin(angle * val) * point.z), fabs(-point.y), fabs(-sin(angle * val) * point.x + cos(angle * val) * point.z));
@@ -544,9 +544,9 @@ BCAPoint BCAPerspectiveTransformationAroundY (BCAPoint point){
 	return newPoint;
 }
 
-BCAPoint BCAPerspectiveTransformationAroundZ (BCAPoint point){
+BCAPoint BCAPerspectiveTransformationAroundZ (BCAPoint point, double angle){
 	BCAPoint newPoint;
-	double angle = 0.0;
+	//double angle = 0.0;
 	double val = M_PI / 180.0;
 	
 	newPoint = BCAPointMake(fabs(cos(angle * val) * point.x - sin(angle * val) * -point.y), fabs(sin(angle * val) * point.x + cos(angle * val) * -point.y), point.z);
@@ -554,9 +554,76 @@ BCAPoint BCAPerspectiveTransformationAroundZ (BCAPoint point){
 	return newPoint;
 }
 
-
-
-
+BCA3DTransform BCASetTransformMake (double angle, char axis){
+	
+	//float t11, t12, t13, t14; // [ a b c tx ]
+	//float t21, t22, t23, t24; // [ d e f ty ]
+	//float t31, t32, t33, t34; // [ g h i tz ]
+	//float t41, t42, t43, t44; // [ j k l 1  ]
+	
+	double val = M_PI / 180.0;
+	
+	BCA3DTransform newTransform;
+	if (axis == 'X') {
+		newTransform.t11 = 1;
+		newTransform.t12 = 0;
+		newTransform.t13 = 0;
+		newTransform.t14 = 0;
+		newTransform.t21 = 0;
+		newTransform.t22 = cos(angle * val);
+		newTransform.t23 = -sin(angle * val);
+		newTransform.t24 = 0;
+		newTransform.t31 = 0;
+		newTransform.t32 = sin(angle * val);
+		newTransform.t33 = cos(angle * val);
+		newTransform.t34 = 0;
+		newTransform.t41 = 0;
+		newTransform.t42 = 0;
+		newTransform.t43 = 0;
+		newTransform.t44 = 1;
+	}
+	else if (axis == 'Y') {
+		newTransform.t11 = cos(angle * val);
+		newTransform.t12 = 0;
+		newTransform.t13 = sin(angle * val);
+		newTransform.t14 = 0;
+		newTransform.t21 = 0;
+		newTransform.t22 = 1;
+		newTransform.t23 = 0;
+		newTransform.t24 = 0;
+		newTransform.t31 = -sin(angle * val);
+		newTransform.t32 = 0;
+		newTransform.t33 = cos(angle * val);
+		newTransform.t34 = 0;
+		newTransform.t41 = 0;
+		newTransform.t42 = 0;
+		newTransform.t43 = 0;
+		newTransform.t44 = 1;
+	}
+	else if (axis == 'Z') {
+		newTransform.t11 = cos(angle * val);
+		newTransform.t12 = -sin(angle * val);
+		newTransform.t13 = 0;
+		newTransform.t14 = 0;
+		newTransform.t21 = sin(angle * val);
+		newTransform.t22 = cos(angle * val);
+		newTransform.t23 = 0;
+		newTransform.t24 = 0;
+		newTransform.t31 = 0;
+		newTransform.t32 = 0;
+		newTransform.t33 = 1;
+		newTransform.t34 = 0;
+		newTransform.t41 = 0;
+		newTransform.t42 = 0;
+		newTransform.t43 = 0;
+		newTransform.t44 = 1;
+	}
+	else {
+		NSLog(@"Wrong corrdinates");
+	}
+	
+	return newTransform;
+}
 
 
 uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
@@ -592,21 +659,22 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 		}
 	}
 	
+	double angle = 0.0;
 	
-	BCAPoint p1 = BCAPointMake(6, 100, 50);
-	BCAPoint p2 = BCAPointMake(6, 200, 50);
+	BCAPoint p1 = BCAPointMake(100, 100, 50);
+	BCAPoint p2 = BCAPointMake(100, 200, 50);
 	BCAPoint p3 = BCAPointMake(120, 150, 0);
 	
-	NSLog(@"p1: %f %f %f", BCAPerspectiveTransformationAroundY(p1).x, BCAPerspectiveTransformationAroundY(p1).y, BCAPerspectiveTransformationAroundY(p1).z);
-	NSLog(@"p2: %f %f %f", BCAPerspectiveTransformationAroundX(p2).x, BCAPerspectiveTransformationAroundY(p2).y, BCAPerspectiveTransformationAroundY(p2).z);
-	NSLog(@"p3: %f %f %f", BCAPerspectiveTransformationAroundX(p3).x, BCAPerspectiveTransformationAroundY(p3).y, BCAPerspectiveTransformationAroundY(p3).z);
+	NSLog(@"p1: %f %f %f", BCAPerspectiveTransformationAroundY(p1, 90.0).x, BCAPerspectiveTransformationAroundY(p1, 90.0).y, BCAPerspectiveTransformationAroundY(p1, 90.0).z);
+	NSLog(@"p2: %f %f %f", BCAPerspectiveTransformationAroundX(p2, 90.0).x, BCAPerspectiveTransformationAroundY(p2, 90.0).y, BCAPerspectiveTransformationAroundY(p2, 90.0).z);
+	NSLog(@"p3: %f %f %f", BCAPerspectiveTransformationAroundX(p3, 90.0).x, BCAPerspectiveTransformationAroundY(p3, 90.0).y, BCAPerspectiveTransformationAroundY(p3, 90.0).z);
 	
-	BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p1));
-	BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p2));
-	BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p3));
-
+	//BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p1));
+	//BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p2));
+	//BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p3));
 	//BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
-	BCAFillTriangleWithContext(BCAPerspectiveTransformationAroundY(p1), BCAPerspectiveTransformationAroundY(p2), BCAPerspectiveTransformationAroundY(p3), blueColor, context);
+	
+	BCAFillTriangleWithContext(BCAPerspectiveTransformationAroundY(p1, angle), BCAPerspectiveTransformationAroundY(p2, angle), BCAPerspectiveTransformationAroundY(p3, angle), blueColor, context);
 	
 //	BCAPoint p4 = BCAPointMake(120, 100, 50);
 //	BCAPoint p5 = BCAPointMake(120, 200, 50);

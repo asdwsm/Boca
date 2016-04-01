@@ -10,16 +10,6 @@
 #define boca_h
 
 // drre6375
-
-enum BCAContextOrientation {
-	BCAContextOrientationFront = 0,
-	BCAContextOrientationBack,
-	BCAContextOrientationSideLeft,
-	BCAContextOrientationSideRight,
-	BCAContextOrientationTop,
-	BCAContextOrientationBottom, // this is all for now.
-};
-
 typedef int BCAContextOrientation;
 
 typedef struct BCAPoint {
@@ -41,6 +31,13 @@ typedef struct BCAPolygon {
 	//	int polygonCount;
 } BCAPolygon; // immutable
 
+typedef struct BCA3DTransform {
+	float t11, t12, t13, t14; // [ a b c tx ]
+	float t21, t22, t23, t24; // [ d e f ty ]
+	float t31, t32, t33, t34; // [ g h i tz ]
+	float t41, t42, t43, t44; // [ j k l 1  ]
+} BCA3DTransform;
+
 typedef struct BCARenderingContext {
 	float width;
 	float height;
@@ -50,6 +47,7 @@ typedef struct BCARenderingContext {
 	int availableSpace;
 	uint32_t *buffer;
 	BCAContextOrientation orientation;
+	BCA3DTransform transform;
 	
 } BCARenderingContext; // internally mutable
 

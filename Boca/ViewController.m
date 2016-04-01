@@ -43,6 +43,7 @@
 //	}
 //	[self pushRandomTriangleWithDifferentZ];
 	
+	//uint32_t *buffer;
 	uint32_t *buffer = BCAPixelBufferForRenderingContext(context);
 	// this probably won't work first try ;P
 	// Cool , it did. lol
@@ -80,6 +81,33 @@
 	[downButton setBackgroundColor:[UIColor grayColor]];
 	[self.view addSubview:downButton];
 	
+	UIButton *rotateX = [[UIButton alloc] init];
+	[rotateX setTitle:@"X" forState:UIControlStateNormal];
+	[rotateX addTarget:self action:@selector(buttonPressX:) forControlEvents:UIControlEventTouchUpInside];
+	[rotateX setFrame:CGRectMake(100, 615, 30, 30)];
+	[rotateX setBackgroundColor:[UIColor grayColor]];
+	[self.view addSubview:rotateX];
+	
+}
+
+-(void)buttonPressX:(UIButton *)b {
+	
+	double angle = 5.0;
+	
+	CGFloat bufferWidth = (drawingView.frame.size.width);
+	CGFloat bufferHeight = (drawingView.frame.size.height);
+	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight, 100);
+	
+	BCAPoint p1 = BCAPointMake(200, 100, 50);
+	BCAPoint p2 = BCAPointMake(100, 200, 50);
+	BCAPoint p3 = BCAPointMake(120, 150, 0);
+	
+	BCAFillTriangleWithContext(p1, p2, p3, 0x0000FFFF, context);
+	
+	uint32_t *buffer = BCAPixelBufferForRenderingContext(context);
+	
+	BCAPixelBufferForRenderingContext(context);
+	[drawingView setPixelBuffer:buffer];
 }
 
 - (void)buttonPressDown:(UIButton *)b {
