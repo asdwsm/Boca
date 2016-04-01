@@ -13,9 +13,18 @@
 - (void)drawRect:(CGRect)rect {
 	[super drawRect:rect];
 	
-	for (int i = 0; i < self.pixelBufferWidth; i++) {
-		for (int j = 0; j < self.pixelBufferHeight; j++) {
-			uint32_t pixel = self.pixelBuffer[j * self.pixelBufferWidth + i];
+	if (!_pixelBuffer) return;
+	
+	CGContextRef ctx = UIGraphicsGetCurrentContext();
+	
+	uint16_t width = self.pixelBufferWidth;
+	uint16_t height = self.pixelBufferHeight;
+	uint32_t *buffer = self.pixelBuffer;
+	
+	
+	for (int i = 0; i < width; i++) {
+		for (int j = 0; j < height; j++) {
+			uint32_t pixel = buffer[j * width + i];
 			
 			uint32_t rgba = pixel;
 			//		NSLog(@"c 0x%x", rgba);
@@ -27,9 +36,9 @@
 			
 //			NSLog(@"rgb 0x%x (r:%d,g:%d,b:%d)", rgba, red, green, blue);
 			
-			UIColor *pixelColor = [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:(alpha / 255.0)];
-			[pixelColor set];
-			UIRectFill(CGRectMake(i, j, 1, 1));
+			CGFloat color[4] = {red / 255.0, green / 255.0, blue / 255.0, alpha / 255.0};
+			CGContextSetFillColor(ctx, color);
+			CGContextFillRect(ctx, (CGRect){{i, j}, {1, 1}});
 		}
 	}
 }

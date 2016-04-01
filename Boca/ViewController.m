@@ -44,11 +44,13 @@
 //	[self pushRandomTriangleWithDifferentZ];
 	
 	//uint32_t *buffer;
+
 	uint32_t *buffer = BCAPixelBufferForRenderingContext(context);
 	// this probably won't work first try ;P
 	// Cool , it did. lol
 	
 	[drawingView setPixelBuffer:buffer];
+	[drawingView setNeedsDisplay];
 	
 	// Do any additional setup after loading the view, typically from a nib.
 	
@@ -88,9 +90,19 @@
 	[rotateX setBackgroundColor:[UIColor grayColor]];
 	[self.view addSubview:rotateX];
 	
+	[[NSRunLoop mainRunLoop] addTimer:[NSTimer timerWithTimeInterval:1 target:self selector:@selector(redrawBuffer) userInfo:nil repeats:YES] forMode:NSRunLoopCommonModes];
+	// comment this out to try redrawing only when necessary
+	
 }
 
--(void)buttonPressX:(UIButton *)b {
+- (void)redrawBuffer {
+	uint32_t *buffer = BCAPixelBufferForRenderingContext(context);
+
+	[drawingView setPixelBuffer:buffer];
+	[drawingView setNeedsDisplay];
+}
+
+- (void)buttonPressX:(UIButton *)b {
 	
 	double angle = 5.0;
 	
@@ -106,8 +118,7 @@
 	
 	uint32_t *buffer = BCAPixelBufferForRenderingContext(context);
 	
-	BCAPixelBufferForRenderingContext(context);
-	[drawingView setPixelBuffer:buffer];
+	//	[self redrawBuffer]; uncomment this to try redrawing immediately
 }
 
 - (void)buttonPressDown:(UIButton *)b {

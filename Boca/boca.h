@@ -46,6 +46,7 @@ typedef struct BCARenderingContext {
 	int polygonCount;
 	int availableSpace;
 	uint32_t *buffer;
+	uint32_t *workingBuffer;
 	BCAContextOrientation orientation;
 	BCA3DTransform transform;
 	

@@ -91,6 +91,7 @@ BCAPolygon *BCAPolygonWithColorAndPoints8(uint32_t c, BCAPoint p1, BCAPoint p2, 
 
 BCARenderingContext *BCACreateRenderingContextWithDimensions(float width, float height, float depth) {
 	uint32_t *buffer = calloc(sizeof(uint32_t) * width * height * depth, 1);
+	uint32_t *workingBuffer = calloc(sizeof(uint32_t) * width * height, 1);
 	
 	BCARenderingContext *context = calloc(sizeof(BCARenderingContext), 1);
 	
@@ -98,6 +99,8 @@ BCARenderingContext *BCACreateRenderingContextWithDimensions(float width, float 
 	context->height = height;
 	context->depth = depth;
 	context->buffer = buffer;
+	
+	context->workingBuffer = workingBuffer;
 	
 	context->polygonCount = 0;
 	
@@ -112,7 +115,7 @@ void BCAAddPolygonToContext(BCARenderingContext *context, BCAPolygon *polygon) {
 	
 	int placement = context->polygonCount;
 	
-	NSLog(@"Pg: %d, avail: %d", context->polygonCount, context->availableSpace);
+//	NSLog(@"Pg: %d, avail: %d", context->polygonCount, context->availableSpace);
 	
 	if (context->availableSpace > 0) {
 		context->polygons[placement] = *polygon;
@@ -238,8 +241,8 @@ void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t 
 			float startY2 = middle.y;
 			float startZ2 = middle.z;
 			
-			NSLog(@"middle.y %f", middle.y);
-			NSLog(@"min.x %f", min.x);
+//			NSLog(@"middle.y %f", middle.y);
+//			NSLog(@"min.x %f", min.x);
 			
 			while (startX <= max.x) {
 				BCAPoint newPoint1 = BCAPointMake(startX, fabsf(startY1), startZ1);
@@ -310,8 +313,8 @@ void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t 
 			float startY2 = middle.y;
 			float startZ2 = middle.z;
 			
-			NSLog(@"middle.y %f", middle.y);
-			NSLog(@"min.x %f", min.x);
+//			NSLog(@"middle.y %f", middle.y);
+//			NSLog(@"min.x %f", min.x);
 			
 			while (startX <= max.x) {
 				BCAPoint newPoint1 = BCAPointMake(startX, fabsf(startY1), startZ1);
@@ -382,8 +385,8 @@ void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t 
 			float startY2 = middle.y;
 			float startZ2 = middle.z;
 			
-			NSLog(@"middle.y %f", middle.y);
-			NSLog(@"min.x %f", min.x);
+//			NSLog(@"middle.y %f", middle.y);
+//			NSLog(@"min.x %f", min.x);
 			
 			while (startX <= max.x) {
 				BCAPoint newPoint1 = BCAPointMake(startX, fabsf(startY1), startZ1);
@@ -466,9 +469,9 @@ void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t 
 		}
 	}
 	
-	NSLog(@"p1: %f %f %f", p1.x, p1.y, p1.z);
-	NSLog(@"p2: %f %f %f", p2.x, p2.y, p2.z);
-	NSLog(@"p3: %f %f %f", p3.x, p3.y, p3.z);
+//	NSLog(@"p1: %f %f %f", p1.x, p1.y, p1.z);
+//	NSLog(@"p2: %f %f %f", p2.x, p2.y, p2.z);
+//	NSLog(@"p3: %f %f %f", p3.x, p3.y, p3.z);
 
 	
 	float minToMiddleX = (middle.x - min.x) / n;
@@ -619,7 +622,7 @@ BCA3DTransform BCASetTransformMake (double angle, char axis){
 		newTransform.t44 = 1;
 	}
 	else {
-		NSLog(@"Wrong corrdinates");
+//		NSLog(@"Wrong corrdinates");
 	}
 	
 	return newTransform;
@@ -631,7 +634,8 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 	// allocate a uint32_t buffer of size context.width * context.height * sizeof(uint32_t)
 	//uint32_t buffer = context.width * context.height * sizeof(float);
 	// no
-	uint32_t *buffer = calloc(sizeof(uint32_t) * (int)context->width * (int)context->height, 1);
+	uint32_t *buffer = context->workingBuffer;
+	memset(buffer, '\0', sizeof(uint32_t) * context->width * context->height);
 	// make sense?
 
 	// fills `buffer` with 0s. so every pixel is by default black.
@@ -665,9 +669,9 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 	BCAPoint p2 = BCAPointMake(100, 200, 50);
 	BCAPoint p3 = BCAPointMake(120, 150, 0);
 	
-	NSLog(@"p1: %f %f %f", BCAPerspectiveTransformationAroundY(p1, 90.0).x, BCAPerspectiveTransformationAroundY(p1, 90.0).y, BCAPerspectiveTransformationAroundY(p1, 90.0).z);
-	NSLog(@"p2: %f %f %f", BCAPerspectiveTransformationAroundX(p2, 90.0).x, BCAPerspectiveTransformationAroundY(p2, 90.0).y, BCAPerspectiveTransformationAroundY(p2, 90.0).z);
-	NSLog(@"p3: %f %f %f", BCAPerspectiveTransformationAroundX(p3, 90.0).x, BCAPerspectiveTransformationAroundY(p3, 90.0).y, BCAPerspectiveTransformationAroundY(p3, 90.0).z);
+//	NSLog(@"p1: %f %f %f", BCAPerspectiveTransformationAroundY(p1, 90.0).x, BCAPerspectiveTransformationAroundY(p1, 90.0).y, BCAPerspectiveTransformationAroundY(p1, 90.0).z);
+//	NSLog(@"p2: %f %f %f", BCAPerspectiveTransformationAroundX(p2, 90.0).x, BCAPerspectiveTransformationAroundY(p2, 90.0).y, BCAPerspectiveTransformationAroundY(p2, 90.0).z);
+//	NSLog(@"p3: %f %f %f", BCAPerspectiveTransformationAroundX(p3, 90.0).x, BCAPerspectiveTransformationAroundY(p3, 90.0).y, BCAPerspectiveTransformationAroundY(p3, 90.0).z);
 	
 	//BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p1));
 	//BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p2));
