@@ -150,7 +150,17 @@ __attribute__((always_inline)) inline void BCASetPixelColorForBufferAtPoint(BCAR
 		return;
 	}
 	
-	buffer[(int)(width * height) * (int)newZ + (int)newY * (int)width + (int)newX] = color;
+	if (newX > width || newX < 0 || newY > height || newY < 0 || newZ > depth || newZ < 0) {
+		NSLog(@"depth %f", depth);
+		NSLog(@"t31 %f", context->transform.t31);
+		NSLog(@"t32 %f", context->transform.t32);
+		NSLog(@"t33 %f", context->transform.t33);
+		NSLog(@"x y z %f %f %f", point.x, point.y, point.z);
+		NSLog(@"BAD COORDINATES %f %f %f", newX, newY, newZ);
+		return;
+	}
+	//buffer[(int)(width * height) * (int)point.z + (int)point.y * (int)width + (int)point.x] = color;
+	buffer[(int)(width * height) * (int)point.z + (int)point.y * (int)width + (int)point.x] = color;
 }
 
 __attribute__((always_inline)) inline void BCASetPixelColorForContextWithBufferAtPoint(BCARenderingContext *context, uint32_t *buffer, uint32_t color, BCAPoint point) {
