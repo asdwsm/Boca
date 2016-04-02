@@ -34,7 +34,8 @@
 	// This is just an example. The rendering engine will give us an uint32_t buffer every 1/60th of second
 	// Which will only be new if something has changed. (Marked "Dirty")
 	
-	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight, 100);
+	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight, 200);
+	BCASetTransformMake(context, 0, 'X');
 
 	for (int i = 0; i < 5; i++)
 		[self pushRandomTriangle];
@@ -44,7 +45,6 @@
 //	[self pushRandomTriangleWithDifferentZ];
 	
 	//uint32_t *buffer;
-
 	uint32_t *buffer = BCAPixelBufferForRenderingContext(context);
 	// this probably won't work first try ;P
 	// Cool , it did. lol
@@ -90,12 +90,13 @@
 	[rotateX setBackgroundColor:[UIColor grayColor]];
 	[self.view addSubview:rotateX];
 	
-	[[NSRunLoop mainRunLoop] addTimer:[NSTimer timerWithTimeInterval:1 target:self selector:@selector(redrawBuffer) userInfo:nil repeats:YES] forMode:NSRunLoopCommonModes];
+	//[[NSRunLoop mainRunLoop] addTimer:[NSTimer timerWithTimeInterval:1 target:self selector:@selector(redrawBuffer) userInfo:nil repeats:YES] forMode:NSRunLoopCommonModes];
 	// comment this out to try redrawing only when necessary
 	
 }
 
 - (void)redrawBuffer {
+	
 	uint32_t *buffer = BCAPixelBufferForRenderingContext(context);
 
 	[drawingView setPixelBuffer:buffer];
@@ -104,21 +105,11 @@
 
 - (void)buttonPressX:(UIButton *)b {
 	
-	double angle = 5.0;
+	double angle = 90.0;
+	char axis = 'Y';
+	BCASetTransformMake (context ,angle, axis);
 	
-	CGFloat bufferWidth = (drawingView.frame.size.width);
-	CGFloat bufferHeight = (drawingView.frame.size.height);
-	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight, 100);
-	
-	BCAPoint p1 = BCAPointMake(200, 100, 50);
-	BCAPoint p2 = BCAPointMake(100, 200, 50);
-	BCAPoint p3 = BCAPointMake(120, 150, 0);
-	
-	BCAFillTriangleWithContext(p1, p2, p3, 0x0000FFFF, context);
-	
-	uint32_t *buffer = BCAPixelBufferForRenderingContext(context);
-	
-	//	[self redrawBuffer]; uncomment this to try redrawing immediately
+	[self redrawBuffer]; //uncomment this to try redrawing immediately
 }
 
 - (void)buttonPressDown:(UIButton *)b {

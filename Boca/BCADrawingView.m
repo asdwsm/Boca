@@ -27,7 +27,7 @@
 			uint32_t pixel = buffer[j * width + i];
 			
 			uint32_t rgba = pixel;
-			//		NSLog(@"c 0x%x", rgba);
+//			NSLog(@"c 0x%x", rgba);
 			uint8_t red = rgba >> 24;
 			uint8_t green = rgba >> 16;
 			uint8_t blue = rgba >> 8;

@@ -133,18 +133,34 @@ void BCAAddPolygonToContext(BCARenderingContext *context, BCAPolygon *polygon) {
 	}
 }
 
-__attribute__((always_inline)) inline void BCASetPixelColorForBufferAtPoint(uint32_t *buffer, float width, float height, float depth, uint32_t color, BCAPoint point) {
-
-	if (point.x > width	|| point.x < 0 || point.y > height || point.y < 0 || point.z > depth || point.z < 0) {
-//		NSLog(@"BAD COORDINATES. %s", BCAStringFromPoint(point));
+__attribute__((always_inline)) inline void BCASetPixelColorForBufferAtPoint(BCARenderingContext *context, uint32_t *buffer, float width, float height, float depth, uint32_t color, BCAPoint point) {
+	
+	//NSLog(@"t11 %f", context->transform.t11);
+	
+	float newX = fabs(point.x * context->transform.t11 - point.y * context->transform.t12 + point.z * context->transform.t13);
+	float newY = fabs(point.x * context->transform.t21 - point.y * context->transform.t22 + point.z * context->transform.t23);
+	float newZ = fabs(point.x * context->transform.t31 - point.y * context->transform.t32 + point.z * context->transform.t33);
+	
+//	if (point.x > width	|| point.x < 0 || point.y > height || point.y < 0 || point.z > depth || point.z < 0) {
+////		NSLog(@"BAD COORDINATES. %s", BCAStringFromPoint(point));
+//		return;
+//	}
+	
+	if (newX > width || newX < 0 || newY > height || newY < 0 || newZ > depth || newZ < 0) {
+		NSLog(@"depth %f", depth);
+		NSLog(@"t31 %f", context->transform.t31);
+		NSLog(@"t32 %f", context->transform.t32);
+		NSLog(@"t33 %f", context->transform.t33);
+		NSLog(@"x y z %f %f %f", point.x, point.y, point.z);
+		NSLog(@"BAD COORDINATES %f %f %f", newX, newY, newZ);
 		return;
 	}
-	
-	buffer[(int)(width * height) * (int)point.z + (int)point.y * (int)width + (int)point.x] = color;
+	//buffer[(int)(width * height) * (int)point.z + (int)point.y * (int)width + (int)point.x] = color;
+	buffer[(int)(width * height) * (int)newZ + (int)newY * (int)width + (int)newX] = color;
 }
 
 __attribute__((always_inline)) inline void BCASetPixelColorForContextWithBufferAtPoint(BCARenderingContext *context, uint32_t *buffer, uint32_t color, BCAPoint point) {
-	BCASetPixelColorForBufferAtPoint(buffer, context->width, context->height, context->depth, color, point);
+	BCASetPixelColorForBufferAtPoint(context, buffer, context->width, context->height, context->depth, color, point);
 }
 
 __attribute__((always_inline)) inline void BCASetPixelColorForContextAtPoint(BCARenderingContext *context, uint32_t color, BCAPoint point) {
@@ -557,7 +573,7 @@ BCAPoint BCAPerspectiveTransformationAroundZ (BCAPoint point, double angle){
 	return newPoint;
 }
 
-BCA3DTransform BCASetTransformMake (double angle, char axis){
+void BCASetTransformMake (BCARenderingContext *context, double angle, char axis){
 	
 	//float t11, t12, t13, t14; // [ a b c tx ]
 	//float t21, t22, t23, t24; // [ d e f ty ]
@@ -566,67 +582,82 @@ BCA3DTransform BCASetTransformMake (double angle, char axis){
 	
 	double val = M_PI / 180.0;
 	
-	BCA3DTransform newTransform;
 	if (axis == 'X') {
-		newTransform.t11 = 1;
-		newTransform.t12 = 0;
-		newTransform.t13 = 0;
-		newTransform.t14 = 0;
-		newTransform.t21 = 0;
-		newTransform.t22 = cos(angle * val);
-		newTransform.t23 = -sin(angle * val);
-		newTransform.t24 = 0;
-		newTransform.t31 = 0;
-		newTransform.t32 = sin(angle * val);
-		newTransform.t33 = cos(angle * val);
-		newTransform.t34 = 0;
-		newTransform.t41 = 0;
-		newTransform.t42 = 0;
-		newTransform.t43 = 0;
-		newTransform.t44 = 1;
+		context->transform.t11 = 1;
+		context->transform.t12 = 0;
+		context->transform.t13 = 0;
+		context->transform.t14 = 0;
+		context->transform.t21 = 0;
+		context->transform.t22 = cos(angle * val);
+		context->transform.t23 = -sin(angle * val);
+		context->transform.t24 = 0;
+		context->transform.t31 = 0;
+		context->transform.t32 = sin(angle * val);
+		context->transform.t33 = cos(angle * val);
+		context->transform.t34 = 0;
+		context->transform.t41 = 0;
+		context->transform.t42 = 0;
+		context->transform.t43 = 0;
+		context->transform.t44 = 1;
 	}
 	else if (axis == 'Y') {
-		newTransform.t11 = cos(angle * val);
-		newTransform.t12 = 0;
-		newTransform.t13 = sin(angle * val);
-		newTransform.t14 = 0;
-		newTransform.t21 = 0;
-		newTransform.t22 = 1;
-		newTransform.t23 = 0;
-		newTransform.t24 = 0;
-		newTransform.t31 = -sin(angle * val);
-		newTransform.t32 = 0;
-		newTransform.t33 = cos(angle * val);
-		newTransform.t34 = 0;
-		newTransform.t41 = 0;
-		newTransform.t42 = 0;
-		newTransform.t43 = 0;
-		newTransform.t44 = 1;
+		context->transform.t11 = cos(angle * val);
+		context->transform.t12 = 0;
+		context->transform.t13 = sin(angle * val);
+		context->transform.t14 = 0;
+		context->transform.t21 = 0;
+		context->transform.t22 = 1;
+		context->transform.t23 = 0;
+		context->transform.t24 = 0;
+		context->transform.t31 = -sin(angle * val);
+		context->transform.t32 = 0;
+		context->transform.t33 = cos(angle * val);
+		context->transform.t34 = 0;
+		context->transform.t41 = 0;
+		context->transform.t42 = 0;
+		context->transform.t43 = 0;
+		context->transform.t44 = 1;
 	}
 	else if (axis == 'Z') {
-		newTransform.t11 = cos(angle * val);
-		newTransform.t12 = -sin(angle * val);
-		newTransform.t13 = 0;
-		newTransform.t14 = 0;
-		newTransform.t21 = sin(angle * val);
-		newTransform.t22 = cos(angle * val);
-		newTransform.t23 = 0;
-		newTransform.t24 = 0;
-		newTransform.t31 = 0;
-		newTransform.t32 = 0;
-		newTransform.t33 = 1;
-		newTransform.t34 = 0;
-		newTransform.t41 = 0;
-		newTransform.t42 = 0;
-		newTransform.t43 = 0;
-		newTransform.t44 = 1;
+		context->transform.t11 = cos(angle * val);
+		context->transform.t12 = -sin(angle * val);
+		context->transform.t13 = 0;
+		context->transform.t14 = 0;
+		context->transform.t21 = sin(angle * val);
+		context->transform.t22 = cos(angle * val);
+		context->transform.t23 = 0;
+		context->transform.t24 = 0;
+		context->transform.t31 = 0;
+		context->transform.t32 = 0;
+		context->transform.t33 = 1;
+		context->transform.t34 = 0;
+		context->transform.t41 = 0;
+		context->transform.t42 = 0;
+		context->transform.t43 = 0;
+		context->transform.t44 = 1;
 	}
 	else {
-//		NSLog(@"Wrong corrdinates");
+		NSLog(@"Wrong corrdinates");
 	}
 	
-	return newTransform;
 }
+
+//void BCAContextTransform(BCARenderingContext *context, BCA3DTransform newTransform) {
+//	
+//	
+//	context->width = fabs(context->width * newTransform.t11 + context->height * newTransform.t12 + context->depth * newTransform.t13);
+//	context->height = fabs(context->width * newTransform.t21 + context->height * newTransform.t22 + context->depth * newTransform.t23);
+//	context->depth = fabs(context->width * newTransform.t31 + context->height * newTransform.t32 + context->depth * newTransform.t33);
+//	
+//	NSLog(@"width %f", context->width);
+//	NSLog(@"height %f", context->height);
+//	NSLog(@"depth %f", context->depth);
+//	
+//	
+//	//BCARenderingContext *newContext = BCACreateRenderingContextWithDimensions(width, height, depth);
+//	
+//	//return newContext;
+//}
 
 
 uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
@@ -649,11 +680,11 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 	for (int i = 0; i < context->polygonCount; i++) {
 		BCAPolygon polygon = context->polygons[i];
 		for (int j = 0; j < polygon.triangleCount; j++) {
-			BCATriangle triangle = polygon.triangles[j];
+			//BCATriangle triangle = polygon.triangles[j];
 			
-			BCAPoint p1 = triangle.points[0];
-			BCAPoint p2 = triangle.points[1];
-			BCAPoint p3 = triangle.points[2];
+			//BCAPoint p1 = triangle.points[0];
+			//BCAPoint p2 = triangle.points[1];
+			//BCAPoint p3 = triangle.points[2];
 			//BCADrawLineWithContext(context, p1, p2, blueColor);
 			//BCADrawLineWithContext(context, p1, p3, blueColor);
 			//BCADrawLineWithContext(context, p2, p3, blueColor);
@@ -673,7 +704,7 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 //	NSLog(@"p2: %f %f %f", BCAPerspectiveTransformationAroundX(p2, 90.0).x, BCAPerspectiveTransformationAroundY(p2, 90.0).y, BCAPerspectiveTransformationAroundY(p2, 90.0).z);
 //	NSLog(@"p3: %f %f %f", BCAPerspectiveTransformationAroundX(p3, 90.0).x, BCAPerspectiveTransformationAroundY(p3, 90.0).y, BCAPerspectiveTransformationAroundY(p3, 90.0).z);
 	
-	//BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p1));
+//BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p1));
 	//BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p2));
 	//BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p3));
 	//BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
@@ -742,18 +773,20 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 //	}
 //
 //	
-	//normal perspective –
+//normal perspective –
 	for (int z = context->depth - 1; z >= 0; z--) {
 		for (int y = 0; y < context->height; y++) {
 			for (int x = 0; x < context->width; x++) {
 				uint32_t pixel = BCAGetPixelFromBufferWithSizeAtPoint(context->buffer, context->width, context->height, context->depth, x, y, z);
+	
 
 				uint8_t alpha = (uint8_t)pixel;
 				if (alpha != 0) {
-					BCASetPixelColorForBufferAtPoint(buffer, context->width, context->height, 0, pixel, BCAPointMake(x, y, 0));
+					BCASetPixelColorForBufferAtPoint(context, buffer, context->width, context->height, 0, pixel, BCAPointMake(x, y, 0));
 				}
 			}
-		}	}
+		}
+	}
 	
 	
 	
