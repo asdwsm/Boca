@@ -141,21 +141,15 @@ __attribute__((always_inline)) inline void BCASetPixelColorForBufferAtPoint(BCAR
 	float newY = fabs(point.x * context->transform.t21 - point.y * context->transform.t22 + point.z * context->transform.t23);
 	float newZ = fabs(point.x * context->transform.t31 - point.y * context->transform.t32 + point.z * context->transform.t33);
 	
-//	if (point.x > width	|| point.x < 0 || point.y > height || point.y < 0 || point.z > depth || point.z < 0) {
-////		NSLog(@"BAD COORDINATES. %s", BCAStringFromPoint(point));
-//		return;
-//	}
+	point.x = newX;
+	point.y = newY;
+	point.z = newZ;
 	
-	if (newX > width || newX < 0 || newY > height || newY < 0 || newZ > depth || newZ < 0) {
-		NSLog(@"depth %f", depth);
-		NSLog(@"t31 %f", context->transform.t31);
-		NSLog(@"t32 %f", context->transform.t32);
-		NSLog(@"t33 %f", context->transform.t33);
-		NSLog(@"x y z %f %f %f", point.x, point.y, point.z);
-		NSLog(@"BAD COORDINATES %f %f %f", newX, newY, newZ);
+	if (point.x > width	|| point.x < 0 || point.y > height || point.y < 0 || point.z > depth || point.z < 0) {
+//		NSLog(@"BAD COORDINATES. %s", BCAStringFromPoint(point));
 		return;
 	}
-	//buffer[(int)(width * height) * (int)point.z + (int)point.y * (int)width + (int)point.x] = color;
+	
 	buffer[(int)(width * height) * (int)newZ + (int)newY * (int)width + (int)newX] = color;
 }
 
