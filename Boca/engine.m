@@ -48,7 +48,6 @@ BCAPolygon *BCAPolygonWithColorAndPoints6(uint32_t c, BCAPoint p1, BCAPoint p2, 
 BCAPolygon *BCAPolygonWithColorAndPoints7(uint32_t c, BCAPoint p1, BCAPoint p2, BCAPoint p3, BCAPoint p4, BCAPoint p5, BCAPoint p6, BCAPoint p7) {
 		return NULL;
 }
-
 BCAPolygon *BCAPolygonWithColorAndPoints8(uint32_t c, BCAPoint p1, BCAPoint p2, BCAPoint p3, BCAPoint p4, BCAPoint p5, BCAPoint p6, BCAPoint p7, BCAPoint p8) {
 //	BCAPolygon *poly = nil;
 //	
@@ -133,7 +132,20 @@ void BCAAddPolygonToContext(BCARenderingContext *context, BCAPolygon *polygon) {
 	}
 }
 
-__attribute__((always_inline)) inline void BCASetPixelColorForBufferAtPoint(BCARenderingContext *context, uint32_t *buffer, float width, float height, float depth, uint32_t color, BCAPoint point) {
+__attribute__((always_inline)) inline void BCASetPixelColorForBufferAtPointNoTransform(BCARenderingContext *context, uint32_t *buffer, float width, float height, float depth, uint32_t color, BCAPoint point) {
+	if (point.x > width	|| point.x < 0.0f || point.y > height || point.y < 0.0f || point.z > depth || point.z < 0.0f) {
+		NSLog(@"depth %f", depth);
+		NSLog(@"t31 %f", context->transform.t31);
+		NSLog(@"t32 %f", context->transform.t32);
+		NSLog(@"t33 %f", context->transform.t33);
+		NSLog(@"x y z %f %f %f", point.x, point.y, point.z);
+		return;
+	}
+	//buffer[(int)(width * height) * (int)point.z + (int)point.y * (int)width + (int)point.x] = color;
+	buffer[(int)(width * height) * (int)point.z + (int)point.y * (int)width + (int)point.x] = color;
+}
+
+__attribute__((always_inline)) inline void BCASetPixelColorForContextAtPoint(BCARenderingContext *context, uint32_t *buffer, float width, float height, float depth, uint32_t color, BCAPoint point) {
 	
 	//NSLog(@"t11 %f", context->transform.t11);
 	
@@ -145,30 +157,7 @@ __attribute__((always_inline)) inline void BCASetPixelColorForBufferAtPoint(BCAR
 	point.y = newY;
 	point.z = newZ;
 	
-	if (point.x > width	|| point.x < 0 || point.y > height || point.y < 0 || point.z > depth || point.z < 0) {
-//		NSLog(@"BAD COORDINATES. %s", BCAStringFromPoint(point));
-		return;
-	}
-	
-	if (newX > width || newX < 0 || newY > height || newY < 0 || newZ > depth || newZ < 0) {
-		NSLog(@"depth %f", depth);
-		NSLog(@"t31 %f", context->transform.t31);
-		NSLog(@"t32 %f", context->transform.t32);
-		NSLog(@"t33 %f", context->transform.t33);
-		NSLog(@"x y z %f %f %f", point.x, point.y, point.z);
-		NSLog(@"BAD COORDINATES %f %f %f", newX, newY, newZ);
-		return;
-	}
-	//buffer[(int)(width * height) * (int)point.z + (int)point.y * (int)width + (int)point.x] = color;
-	buffer[(int)(width * height) * (int)point.z + (int)point.y * (int)width + (int)point.x] = color;
-}
-
-__attribute__((always_inline)) inline void BCASetPixelColorForContextWithBufferAtPoint(BCARenderingContext *context, uint32_t *buffer, uint32_t color, BCAPoint point) {
-	BCASetPixelColorForBufferAtPoint(context, buffer, context->width, context->height, context->depth, color, point);
-}
-
-__attribute__((always_inline)) inline void BCASetPixelColorForContextAtPoint(BCARenderingContext *context, uint32_t color, BCAPoint point) {
-	BCASetPixelColorForContextWithBufferAtPoint(context, context->buffer, color, point);
+	BCASetPixelColorForBufferAtPointNoTransform(context, buffer, width, height, depth, color, point);
 }
 
 void BCADrawLineWithContext (BCARenderingContext *context, BCAPoint p1, BCAPoint p2, uint32_t color) {
@@ -190,7 +179,7 @@ void BCADrawLineWithContext (BCARenderingContext *context, BCAPoint p1, BCAPoint
 	while (incrementTimes != n) {
 		BCAPoint newPoint = BCAPointMake(startX, fabsf(startY), startZ);
 		//NSLog(@"Point %f %f %f", newPoint.x, newPoint.y, newPoint.z);
-		BCASetPixelColorForContextAtPoint(context, color, newPoint);
+		BCASetPixelColorForContextAtPoint(context, context->buffer, context->width, context->height, context->depth, color, newPoint);
 		startX = startX + incrementX;
 		startY = startY + incrementY;
 		startZ = startZ + incrementZ;
@@ -198,9 +187,10 @@ void BCADrawLineWithContext (BCARenderingContext *context, BCAPoint p1, BCAPoint
 	}
 }
 
-BCAPoint BCACrossProduct(BCAPoint a, BCAPoint b){
+BCAPoint BCACrossProduct(BCAPoint a, BCAPoint b) {
 	BCAPoint crossProduct = BCAPointMake((a.y * b.z - a.z * b.y), (a.z * b.x - a.x * b.z), (a.x * b.y - a.y * b.x));
 	return crossProduct;
+	// good job tommy
 }
 
 void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t color, BCARenderingContext *context) {
@@ -786,14 +776,11 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 
 				uint8_t alpha = (uint8_t)pixel;
 				if (alpha != 0) {
-					BCASetPixelColorForBufferAtPoint(context, buffer, context->width, context->height, 0, pixel, BCAPointMake(x, y, 0));
+					BCASetPixelColorForBufferAtPointNoTransform(context, buffer, context->width, context->height, context->depth, pixel, BCAPointMake(x, y, 0));
 				}
 			}
 		}
 	}
-	
-	
-	
 
 //	// Let's test our code.
 //	
