@@ -15,6 +15,7 @@
 	
 	if (!_pixelBuffer) return;
 	
+	
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	
 	uint16_t width = self.pixelBufferWidth;

@@ -20,6 +20,7 @@
 	
 	drawingView = [[BCADrawingView alloc] init];
 	[self.view addSubview:drawingView];
+	[drawingView setClearsContextBeforeDrawing:YES];
 	[drawingView setFrame:CGRectMake(0, 20, self.view.frame.size.width, self.view.frame.size.height - 20)];
 	
 	CGFloat bufferWidth = (drawingView.frame.size.width);
@@ -109,7 +110,7 @@
 	char axis = 'Y';
 	BCASetTransformMake (context ,angle, axis);
 	
-	[self redrawBuffer]; //uncomment this to try redrawing immediately
+	[self redrawBuffer]; // comment this to try redrawing immediately
 }
 
 - (void)buttonPressDown:(UIButton *)b {

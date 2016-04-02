@@ -141,13 +141,11 @@ __attribute__((always_inline)) inline void BCASetPixelColorForBufferAtPointNoTra
 		NSLog(@"x y z %f %f %f", point.x, point.y, point.z);
 		return;
 	}
-	//buffer[(int)(width * height) * (int)point.z + (int)point.y * (int)width + (int)point.x] = color;
+	
 	buffer[(int)(width * height) * (int)point.z + (int)point.y * (int)width + (int)point.x] = color;
 }
 
 __attribute__((always_inline)) inline void BCASetPixelColorForContextAtPoint(BCARenderingContext *context, uint32_t *buffer, float width, float height, float depth, uint32_t color, BCAPoint point) {
-	
-	//NSLog(@"t11 %f", context->transform.t11);
 	
 	float newX = fabs(point.x * context->transform.t11 - point.y * context->transform.t12 + point.z * context->transform.t13);
 	float newY = fabs(point.x * context->transform.t21 - point.y * context->transform.t22 + point.z * context->transform.t23);
@@ -661,6 +659,7 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 	// no
 	uint32_t *buffer = context->workingBuffer;
 	memset(buffer, '\0', sizeof(uint32_t) * context->width * context->height);
+	memset(context->buffer, '\0', sizeof(uint32_t) * context->width * context->depth * context->height);
 	// make sense?
 
 	// fills `buffer` with 0s. so every pixel is by default black.
@@ -702,8 +701,8 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 	//BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p2));
 	//BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p3));
 	//BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
-	
-	BCAFillTriangleWithContext(BCAPerspectiveTransformationAroundY(p1, angle), BCAPerspectiveTransformationAroundY(p2, angle), BCAPerspectiveTransformationAroundY(p3, angle), blueColor, context);
+
+	BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
 	
 //	BCAPoint p4 = BCAPointMake(120, 100, 50);
 //	BCAPoint p5 = BCAPointMake(120, 200, 50);
