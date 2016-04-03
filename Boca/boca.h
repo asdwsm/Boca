@@ -49,6 +49,8 @@ typedef struct BCARenderingContext {
 	uint32_t *workingBuffer;
 	BCAContextOrientation orientation;
 	BCA3DTransform transform;
+	double angle;
+	char axis;
 } BCARenderingContext; // internally mutable
 
 BCAPolygon *BCAPolygonWithColorAndPoints3(uint32_t c, BCAPoint p1, BCAPoint p2, BCAPoint p3);

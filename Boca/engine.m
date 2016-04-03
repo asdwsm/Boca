@@ -134,11 +134,11 @@ void BCAAddPolygonToContext(BCARenderingContext *context, BCAPolygon *polygon) {
 
 __attribute__((always_inline)) inline void BCASetPixelColorForBufferAtPointNoTransform(BCARenderingContext *context, uint32_t *buffer, float width, float height, float depth, uint32_t color, BCAPoint point) {
 	if (point.x > width	|| point.x < 0.0f || point.y > height || point.y < 0.0f || point.z > depth || point.z < 0.0f) {
-		NSLog(@"depth %f", depth);
-		NSLog(@"t31 %f", context->transform.t31);
-		NSLog(@"t32 %f", context->transform.t32);
-		NSLog(@"t33 %f", context->transform.t33);
-		NSLog(@"x y z %f %f %f", point.x, point.y, point.z);
+//		NSLog(@"depth %f", depth);
+//		NSLog(@"t31 %f", context->transform.t31);
+//		NSLog(@"t32 %f", context->transform.t32);
+//		NSLog(@"t33 %f", context->transform.t33);
+//		NSLog(@"x y z %f %f %f", point.x, point.y, point.z);
 		return;
 	}
 	
@@ -535,34 +535,25 @@ uint32_t BCAGetPixelFromBufferWithSizeAtPoint(uint32_t *buffer, float width, flo
 	return buffer[(int)z * (int)(width * height) + (int)y * (int)width + (int)x];
 }
 
-BCAPoint BCAPerspectiveTransformationAroundX (BCAPoint point, double angle){
+BCAPoint BCAPerspectiveTransformationAround (BCAPoint point, double angle, char axis) {
 	BCAPoint newPoint;
-	//double angle = 90.0;
-	double val = M_PI / 180.0;
+	if (axis  == 'X') {
+		double val = M_PI / 180.0;
+		
+		newPoint = BCAPointMake(fabs(point.x), fabs(cos(angle * val) * -point.y - sin(angle * val) * point.z), fabs(sin(angle * val) * -point.y + cos(angle * val) * point.z));
+	}
+	else if (axis == 'Y') {
+		double val = M_PI / 180.0;
+		
+		newPoint = BCAPointMake(fabs(cos(angle * val) * point.x + sin(angle * val) * point.z), fabs(-point.y), fabs(-sin(angle * val) * point.x + cos(angle * val) * point.z));
+	}
+	else if (axis == 'Z') {
+		double val = M_PI / 180.0;
+		
+		newPoint = BCAPointMake(fabs(cos(angle * val) * point.x - sin(angle * val) * -point.y), fabs(sin(angle * val) * point.x + cos(angle * val) * -point.y), point.z);
+	}
 	
-	newPoint = BCAPointMake(fabs(point.x), fabs(cos(angle * val) * -point.y - sin(angle * val) * point.z), fabs(sin(angle * val) * -point.y + cos(angle * val) * point.z));
-
-	return newPoint;
-}
-
-BCAPoint BCAPerspectiveTransformationAroundY (BCAPoint point, double angle){
-	BCAPoint newPoint;
-	//double angle = 50.0;
-	double val = M_PI / 180.0;
-	
-	newPoint = BCAPointMake(fabs(cos(angle * val) * point.x + sin(angle * val) * point.z), fabs(-point.y), fabs(-sin(angle * val) * point.x + cos(angle * val) * point.z));
-	
-	return newPoint;
-}
-
-BCAPoint BCAPerspectiveTransformationAroundZ (BCAPoint point, double angle){
-	BCAPoint newPoint;
-	//double angle = 0.0;
-	double val = M_PI / 180.0;
-	
-	newPoint = BCAPointMake(fabs(cos(angle * val) * point.x - sin(angle * val) * -point.y), fabs(sin(angle * val) * point.x + cos(angle * val) * -point.y), point.z);
-	
-	return newPoint;
+	return  newPoint;
 }
 
 void BCASetTransformMake (BCARenderingContext *context, double angle, char axis){
@@ -673,25 +664,39 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 	for (int i = 0; i < context->polygonCount; i++) {
 		BCAPolygon polygon = context->polygons[i];
 		for (int j = 0; j < polygon.triangleCount; j++) {
-			//BCATriangle triangle = polygon.triangles[j];
+			BCATriangle triangle = polygon.triangles[j];
 			
 			//BCAPoint p1 = triangle.points[0];
-			//BCAPoint p2 = triangle.points[1];
-			//BCAPoint p3 = triangle.points[2];
+			
+			BCAPoint p1 = BCAPerspectiveTransformationAround(triangle.points[0], context->angle, context->axis);
+			triangle.points[0] = BCAPerspectiveTransformationAround(triangle.points[0], context->angle, context->axis);
+			BCAPoint p2 = BCAPerspectiveTransformationAround(triangle.points[1], context->angle, context->axis);
+			triangle.points[1] = BCAPerspectiveTransformationAround(triangle.points[1], context->angle, context->axis);
+			BCAPoint p3 = BCAPerspectiveTransformationAround(triangle.points[2], context->angle, context->axis);
+			triangle.points[2] = BCAPerspectiveTransformationAround(triangle.points[2], context->angle, context->axis);
+			
+			//			BCAPoint p2 = triangle.points[1];
+			//			BCAPoint p3 = triangle.points[2];
 			//BCADrawLineWithContext(context, p1, p2, blueColor);
 			//BCADrawLineWithContext(context, p1, p3, blueColor);
 			//BCADrawLineWithContext(context, p2, p3, blueColor);
 			
-			//BCAFillTriangleWithContext(p1, p2, p3, triangle.color, context);
+			BCAFillTriangleWithContext(p1, p2, p3, triangle.color, context);
+
 			
 		}
 	}
 	
-	double angle = 0.0;
-	
+//	double angle = 0.0;
+//	
 	BCAPoint p1 = BCAPointMake(100, 100, 50);
 	BCAPoint p2 = BCAPointMake(100, 200, 50);
 	BCAPoint p3 = BCAPointMake(120, 150, 0);
+	p1 = BCAPerspectiveTransformationAround(p1, context->angle, context->axis);
+	p2 = BCAPerspectiveTransformationAround(p2, context->angle, context->axis);
+	p3 = BCAPerspectiveTransformationAround(p3, context->angle, context->axis);
+	
+	BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
 	
 //	NSLog(@"p1: %f %f %f", BCAPerspectiveTransformationAroundY(p1, 90.0).x, BCAPerspectiveTransformationAroundY(p1, 90.0).y, BCAPerspectiveTransformationAroundY(p1, 90.0).z);
 //	NSLog(@"p2: %f %f %f", BCAPerspectiveTransformationAroundX(p2, 90.0).x, BCAPerspectiveTransformationAroundY(p2, 90.0).y, BCAPerspectiveTransformationAroundY(p2, 90.0).z);
@@ -701,8 +706,7 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
 	//BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p2));
 	//BCASetPixelColorForContextAtPoint(context, whiteColor, BCAPerspectiveTransformationAroundX(p3));
 	//BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
-
-	BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
+//	BCAFillTriangleWithContext(p1, p2, p3, blueColor, context);
 	
 //	BCAPoint p4 = BCAPointMake(120, 100, 50);
 //	BCAPoint p5 = BCAPointMake(120, 200, 50);

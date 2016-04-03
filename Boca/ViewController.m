@@ -37,6 +37,8 @@
 	
 	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight, 200);
 	BCASetTransformMake(context, 0, 'X');
+	context->angle = 0.0;
+	context->axis = 'X';
 
 	for (int i = 0; i < 5; i++)
 		[self pushRandomTriangle];
@@ -106,9 +108,11 @@
 
 - (void)buttonPressX:(UIButton *)b {
 	
-	double angle = 90.0;
-	char axis = 'Y';
-	BCASetTransformMake (context ,angle, axis);
+//	double angle = 90.0;
+//	char axis = 'Y';
+//	BCASetTransformMake (context ,angle, axis);
+	context->angle = 10.0;
+	context->axis = 'X';
 	
 	[self redrawBuffer]; // comment this to try redrawing immediately
 }
