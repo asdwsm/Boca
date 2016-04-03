@@ -193,6 +193,11 @@ BCAPoint BCACrossProduct(BCAPoint a, BCAPoint b) {
 
 void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t color, BCARenderingContext *context) {
 	
+	
+	BCADrawLineWithContext(context, p1, p2, whiteColor);
+	BCADrawLineWithContext(context, p2, p3, whiteColor);
+	BCADrawLineWithContext(context, p3, p1, whiteColor);
+	
 	BCAPoint max, middle, min;
 	
 	float n = 500.0;
@@ -531,7 +536,7 @@ void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t 
 	}
 }
 
-uint32_t BCAGetPixelFromBufferWithSizeAtPoint(uint32_t *buffer, float width, float height, float depth, float x, float y, float z) {
+__attribute__((always_inline)) inline uint32_t BCAGetPixelFromBufferWithSizeAtPoint(uint32_t *buffer, float width, float height, float depth, float x, float y, float z) {
 	return buffer[(int)z * (int)(width * height) + (int)y * (int)width + (int)x];
 }
 
@@ -643,7 +648,8 @@ void BCASetTransformMake (BCARenderingContext *context, double angle, char axis)
 //}
 
 
-uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context) {
+uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context)
+{
 	// This is where your turn comes in. :-)
 	// allocate a uint32_t buffer of size context.width * context.height * sizeof(uint32_t)
 	//uint32_t buffer = context.width * context.height * sizeof(float);

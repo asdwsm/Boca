@@ -35,13 +35,13 @@
 	// This is just an example. The rendering engine will give us an uint32_t buffer every 1/60th of second
 	// Which will only be new if something has changed. (Marked "Dirty")
 	
-	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight, 200);
+	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight, 60);
 	BCASetTransformMake(context, 0, 'X');
 	context->angle = 0.0;
 	context->axis = 'X';
 
-	for (int i = 0; i < 5; i++)
-		[self pushRandomTriangle];
+//	for (int i = 0; i < 5; i++)
+//		[self pushRandomTriangle];
 //	for (int i = 0; i < 300; i++) {
 //		[self pushRandomRectangle];
 //	}
@@ -111,7 +111,7 @@
 //	double angle = 90.0;
 //	char axis = 'Y';
 //	BCASetTransformMake (context ,angle, axis);
-	context->angle = 10.0;
+	context->angle = (context->angle + 5.0);
 	context->axis = 'X';
 	
 	[self redrawBuffer]; // comment this to try redrawing immediately
