@@ -89,8 +89,8 @@ BCAPolygon *BCAPolygonWithColorAndPoints8(uint32_t c, BCAPoint p1, BCAPoint p2, 
 }
 
 BCARenderingContext *BCACreateRenderingContextWithDimensions(float width, float height, float depth) {
-	uint32_t *buffer = calloc(sizeof(uint32_t) * width * height * depth, 1);
-	uint32_t *workingBuffer = calloc(sizeof(uint32_t) * width * height, 1);
+	uint32_t *buffer = calloc(sizeof(uint32_t) * width * height, 1);
+	uint8_t *zMap = calloc(sizeof(uint8_t) * width * height, 1);
 	
 	BCARenderingContext *context = calloc(sizeof(BCARenderingContext), 1);
 	
@@ -98,8 +98,7 @@ BCARenderingContext *BCACreateRenderingContextWithDimensions(float width, float 
 	context->height = height;
 	context->depth = depth;
 	context->buffer = buffer;
-	
-	context->workingBuffer = workingBuffer;
+	context->zMap = zMap;
 	
 	context->polygonCount = 0;
 	
@@ -142,7 +141,18 @@ __attribute__((always_inline)) inline void BCASetPixelColorForBufferAtPointNoTra
 		return;
 	}
 	
-	buffer[(int)(width * height) * (int)point.z + (int)point.y * (int)width + (int)point.x] = color;
+	int offset = (int)point.y * (int)width + (int)point.x;
+	
+	uint8_t *zMap = context->zMap;
+	
+	uint8_t zVal = zMap[offset];
+	
+	if (zVal == 0 || point.z <= zVal) {
+		buffer[(int)point.y * (int)width + (int)point.x] = color;
+	}
+	
+	zMap[offset] = point.z;
+
 }
 
 __attribute__((always_inline)) inline void BCASetPixelColorForContextAtPoint(BCARenderingContext *context, uint32_t *buffer, float width, float height, float depth, uint32_t color, BCAPoint point) {
@@ -159,7 +169,7 @@ __attribute__((always_inline)) inline void BCASetPixelColorForContextAtPoint(BCA
 }
 
 void BCADrawLineWithContext (BCARenderingContext *context, BCAPoint p1, BCAPoint p2, uint32_t color) {
-	float n = 500.0;
+	float n = 400.0;
 	float incrementX = (p2.x - p1.x) / n;
 	float incrementY = (-p2.y + p1.y) / n;
 	float incrementZ = (p2.z - p1.z) / n;
@@ -654,9 +664,9 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context)
 	// allocate a uint32_t buffer of size context.width * context.height * sizeof(uint32_t)
 	//uint32_t buffer = context.width * context.height * sizeof(float);
 	// no
-	uint32_t *buffer = context->workingBuffer;
+	uint32_t *buffer = context->buffer;
 	memset(buffer, '\0', sizeof(uint32_t) * context->width * context->height);
-	memset(context->buffer, '\0', sizeof(uint32_t) * context->width * context->depth * context->height);
+	memset(context->zMap, '\0', sizeof(uint8_t) * context->width * context->height);
 	// make sense?
 
 	// fills `buffer` with 0s. so every pixel is by default black.
@@ -777,19 +787,19 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context)
 //
 //	
 //normal perspective –
-	for (int z = context->depth - 1; z >= 0; z--) {
-		for (int y = 0; y < context->height; y++) {
-			for (int x = 0; x < context->width; x++) {
-				uint32_t pixel = BCAGetPixelFromBufferWithSizeAtPoint(context->buffer, context->width, context->height, context->depth, x, y, z);
-	
-
-				uint8_t alpha = (uint8_t)pixel;
-				if (alpha != 0) {
-					BCASetPixelColorForBufferAtPointNoTransform(context, buffer, context->width, context->height, context->depth, pixel, BCAPointMake(x, y, 0));
-				}
-			}
-		}
-	}
+//	for (int z = context->depth - 1; z >= 0; z--) {
+//		for (int y = 0; y < context->height; y++) {
+//			for (int x = 0; x < context->width; x++) {
+//				uint32_t pixel = BCAGetPixelFromBufferWithSizeAtPoint(context->buffer, context->width, context->height, context->depth, x, y, z);
+//	
+//
+//				uint8_t alpha = (uint8_t)pixel;
+//				if (alpha != 0) {
+//					BCASetPixelColorForBufferAtPointNoTransform(context, buffer, context->width, context->height, context->depth, pixel, BCAPointMake(x, y, 0));
+//				}
+//			}
+//		}
+//	}
 
 //	// Let's test our code.
 //	

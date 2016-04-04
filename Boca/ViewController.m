@@ -40,11 +40,8 @@
 	context->angle = 0.0;
 	context->axis = 'X';
 
-//	for (int i = 0; i < 5; i++)
-//		[self pushRandomTriangle];
-//	for (int i = 0; i < 300; i++) {
-//		[self pushRandomRectangle];
-//	}
+	for (int i = 0; i < 5; i++)
+		[self pushRandomTriangle];
 //	[self pushRandomTriangleWithDifferentZ];
 	
 	//uint32_t *buffer;
@@ -96,6 +93,16 @@
 	//[[NSRunLoop mainRunLoop] addTimer:[NSTimer timerWithTimeInterval:1 target:self selector:@selector(redrawBuffer) userInfo:nil repeats:YES] forMode:NSRunLoopCommonModes];
 	// comment this out to try redrawing only when necessary
 	
+	[[CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkLoop:)] addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+	
+}
+
+- (void)displayLinkLoop:(CADisplayLink *)link {
+	static int frameSkip = 0;
+	frameSkip++;
+	if (frameSkip % 3 == 0)
+		[self buttonPressX:nil];
+//	[self redrawBuffer];
 }
 
 - (void)redrawBuffer {
@@ -111,7 +118,7 @@
 //	double angle = 90.0;
 //	char axis = 'Y';
 //	BCASetTransformMake (context ,angle, axis);
-	context->angle = (context->angle + 5.0);
+	context->angle = (context->angle + 1.0);
 	context->axis = 'X';
 	
 	[self redrawBuffer]; // comment this to try redrawing immediately
