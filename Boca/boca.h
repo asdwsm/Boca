@@ -31,6 +31,12 @@ typedef struct BCAPolygon {
 	//	int polygonCount;
 } BCAPolygon; // immutable
 
+typedef struct BCAPolytope {
+	uint32_t color;
+	struct BCAPolygon *polygon;
+	int polygonCount;
+} BCAPolytope;
+
 typedef struct BCA3DTransform {
 	float t11, t12, t13, t14; // [ a b c tx ]
 	float t21, t22, t23, t24; // [ d e f ty ]
@@ -42,8 +48,10 @@ typedef struct BCARenderingContext {
 	float width;
 	float height;
 	float depth;
-	BCAPolygon *polygons;
-	int polygonCount;
+	//BCAPolygon *polygons;
+	BCAPolytope *polytope;
+	int polytopeCount;
+	//int polygonCount;
 	int availableSpace;
 	uint32_t *buffer;
 	uint8_t *zMap;
@@ -52,6 +60,11 @@ typedef struct BCARenderingContext {
 	double angle;
 	char axis;
 } BCARenderingContext; // internally mutable
+
+
+BCAPolytope *BCAAddPolygonToPolytope (uint32_t c, BCAPolygon *polygon1);
+
+
 
 BCAPolygon *BCAPolygonWithColorAndPoints3(uint32_t c, BCAPoint p1, BCAPoint p2, BCAPoint p3);
 BCAPolygon *BCAPolygonWithColorAndPoints4(uint32_t c, BCAPoint p1, BCAPoint p2, BCAPoint p3, BCAPoint p4);

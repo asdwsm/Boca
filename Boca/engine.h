@@ -13,7 +13,9 @@
 #include "boca.h"
 
 BCARenderingContext *BCACreateRenderingContextWithDimensions(float width, float height, float depth);
-void BCAAddPolygonToContext(BCARenderingContext *context, BCAPolygon *polygon);
+
+void BCAAddPolytopeToContext(BCARenderingContext *context, BCAPolytope *polytope);
+
 void BCAFillTriangleWithContext(BCAPoint p1, BCAPoint p2, BCAPoint p3, uint32_t color, BCARenderingContext *context);
 BCAPoint BCAPerspectiveTransformationAroundY (BCAPoint point, double angle);
 uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context);

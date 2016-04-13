@@ -36,6 +36,19 @@ BCAPolygon *BCAPolygonWithColorAndPoints3(uint32_t c, BCAPoint p1, BCAPoint p2, 
 	
 	return polygon;
 }
+
+
+BCAPolytope *BCAAddPolygonToPolytope (uint32_t c, BCAPolygon *polygon1) {
+	
+	BCAPolytope *polytope = calloc(sizeof(BCAPolytope), 1);
+	
+	polytope->color = c;
+	polytope->polygonCount = 1;
+	polytope->polygon = polygon1;
+	
+	return polytope;
+}
+
 BCAPolygon *BCAPolygonWithColorAndPoints4(uint32_t c, BCAPoint p1, BCAPoint p2, BCAPoint p3, BCAPoint p4) {
 		return NULL;
 }
@@ -100,34 +113,34 @@ BCARenderingContext *BCACreateRenderingContextWithDimensions(float width, float 
 	context->buffer = buffer;
 	context->zMap = zMap;
 	
-	context->polygonCount = 0;
+	context->polytopeCount = 0;
 	
 	return context;
 }
 
-void BCAAddPolygonToContext(BCARenderingContext *context, BCAPolygon *polygon) {
-	if (!context->polygons) {
-		context->polygons = calloc(sizeof(BCAPolygon) * 5, 1); // extra space. Can be resized later.
+void BCAAddPolytopeToContext(BCARenderingContext *context, BCAPolytope *polytope) {
+	if (!context->polytope) {
+		context->polytope = calloc(sizeof(BCAPolytope) * 5, 1); // extra space. Can be resized later.
 		context->availableSpace = 5;
 	}
 	
-	int placement = context->polygonCount;
+	int placement = context->polytopeCount;
 	
 //	NSLog(@"Pg: %d, avail: %d", context->polygonCount, context->availableSpace);
 	
 	if (context->availableSpace > 0) {
-		context->polygons[placement] = *polygon;
-		context->polygonCount++;
+		context->polytope[placement] = *polytope;
+		context->polytopeCount++;
 		context->availableSpace--;
 		// this is probably wrong.
 	}
 	
 	else {
 		// Off-by-one errors most likely exist in this whole scheme. ;p
-		context->polygons = realloc(context->polygons, sizeof(BCAPolygon) * (context->polygonCount + 5));
-		context->polygonCount++;
+		context->polytope->polygon = realloc(context->polytope, sizeof(BCAPolytope) * (context->polytopeCount + 5));
+		context->polytopeCount++;
 		context->availableSpace += 4;
-		context->polygons[placement] = *polygon;
+		context->polytope[placement] = *polytope;
 	}
 }
 
@@ -677,30 +690,39 @@ uint32_t *BCAPixelBufferForRenderingContext(BCARenderingContext *context)
 	// FF = alpha = 255 (not transparent, opaque)
 	
 	
-	for (int i = 0; i < context->polygonCount; i++) {
-		BCAPolygon polygon = context->polygons[i];
-		for (int j = 0; j < polygon.triangleCount; j++) {
-			BCATriangle triangle = polygon.triangles[j];
+	for (int i = 0; i < context->polytopeCount; i++) {
+		BCAPolytope polytope = context->polytope[i];
+		
+		for (int k = 0; k < polytope.polygonCount; k++) {
+			BCAPolygon polygon = polytope.polygon[k];
 			
-			//BCAPoint p1 = triangle.points[0];
-			
-			BCAPoint p1 = BCAPerspectiveTransformationAround(triangle.points[0], context->angle, context->axis);
-			triangle.points[0] = BCAPerspectiveTransformationAround(triangle.points[0], context->angle, context->axis);
-			BCAPoint p2 = BCAPerspectiveTransformationAround(triangle.points[1], context->angle, context->axis);
-			triangle.points[1] = BCAPerspectiveTransformationAround(triangle.points[1], context->angle, context->axis);
-			BCAPoint p3 = BCAPerspectiveTransformationAround(triangle.points[2], context->angle, context->axis);
-			triangle.points[2] = BCAPerspectiveTransformationAround(triangle.points[2], context->angle, context->axis);
-			
-			//			BCAPoint p2 = triangle.points[1];
-			//			BCAPoint p3 = triangle.points[2];
-			//BCADrawLineWithContext(context, p1, p2, blueColor);
-			//BCADrawLineWithContext(context, p1, p3, blueColor);
-			//BCADrawLineWithContext(context, p2, p3, blueColor);
-			
-			BCAFillTriangleWithContext(p1, p2, p3, triangle.color, context);
-
+			for (int j = 0; j < polytope.polygonCount; j++) {
+				
+				BCATriangle triangle = polygon.triangles[j];
+				
+				//BCAPoint p1 = triangle.points[0];
+				
+				BCAPoint p1 = BCAPerspectiveTransformationAround(triangle.points[0], context->angle, context->axis);
+				triangle.points[0] = BCAPerspectiveTransformationAround(triangle.points[0], context->angle, context->axis);
+				BCAPoint p2 = BCAPerspectiveTransformationAround(triangle.points[1], context->angle, context->axis);
+				triangle.points[1] = BCAPerspectiveTransformationAround(triangle.points[1], context->angle, context->axis);
+				BCAPoint p3 = BCAPerspectiveTransformationAround(triangle.points[2], context->angle, context->axis);
+				triangle.points[2] = BCAPerspectiveTransformationAround(triangle.points[2], context->angle, context->axis);
+				
+				//			BCAPoint p2 = triangle.points[1];
+				//			BCAPoint p3 = triangle.points[2];
+				//BCADrawLineWithContext(context, p1, p2, blueColor);
+				//BCADrawLineWithContext(context, p1, p3, blueColor);
+				//BCADrawLineWithContext(context, p2, p3, blueColor);
+				
+				BCAFillTriangleWithContext(p1, p2, p3, triangle.color, context);
+				
+				
+			}
 			
 		}
+		
+		
 	}
 	
 //	double angle = 0.0;

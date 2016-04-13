@@ -35,7 +35,7 @@
 	// This is just an example. The rendering engine will give us an uint32_t buffer every 1/60th of second
 	// Which will only be new if something has changed. (Marked "Dirty")
 	
-	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight, 60);
+	context = BCACreateRenderingContextWithDimensions(bufferWidth, bufferHeight, 1000);
 	BCASetTransformMake(context, 0, 'X');
 	context->angle = 0.0;
 	context->axis = 'X';
@@ -93,7 +93,7 @@
 	//[[NSRunLoop mainRunLoop] addTimer:[NSTimer timerWithTimeInterval:1 target:self selector:@selector(redrawBuffer) userInfo:nil repeats:YES] forMode:NSRunLoopCommonModes];
 	// comment this out to try redrawing only when necessary
 	
-	[[CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkLoop:)] addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+	//[[CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkLoop:)] addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
 	
 }
 
@@ -162,7 +162,9 @@
 	
 	BCAPolygon *triangle = BCAPolygonWithColorAndPoints4(0xFF0000FF, p, bottomLeft, bottomRight, topRight);
 	
-	BCAAddPolygonToContext(context, triangle);
+	BCAPolytope *polytope = BCAAddPolygonToPolytope(0xFF0000FF, triangle);
+	
+	BCAAddPolytopeToContext(context, polytope);
 }
 
 - (void)pushRandomTriangleWithDifferentZ {
@@ -214,7 +216,9 @@
 	
 	BCAPolygon *triangle = BCAPolygonWithColorAndPoints3(color, points[0], points[1], points[2]);
 	
-	BCAAddPolygonToContext(context, triangle);
+	BCAPolytope *polytope = BCAAddPolygonToPolytope(color, triangle);
+	
+	BCAAddPolytopeToContext(context, polytope);
 }
 
 - (void)didReceiveMemoryWarning {
